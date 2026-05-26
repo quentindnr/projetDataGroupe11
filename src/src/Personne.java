@@ -7,7 +7,7 @@ public class Personne {
         this.nom = nom;
     }
 
-    public ajouterImage(Image image){
+    public void ajouterImage(Image image){
         this.image = image;
     }
 
@@ -15,7 +15,7 @@ public class Personne {
         return nom;
     }
 
-    public getImage(){
+    public Image getImage(){
         return image;
     }
 
