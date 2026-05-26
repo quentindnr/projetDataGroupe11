@@ -16,10 +16,10 @@ public class Image {
 
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cheminFichier)))) {
 
-            // Lire le "nombre magique"
+            // Lire la signature du fichier
             String magique = lireLigne(in);
             if (!magique.equals("P5")) {
-                throw new IOException("Format non supporté : " + magique);
+                throw new IOException("Ce format n'est pas supporté");
             }
 
             // Lire la ligne suivante, en sautant les commentaires
@@ -48,24 +48,6 @@ public class Image {
         }
     }
 
-    private String lireLigne(InputStream in) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int c;
-        while ((c = in.read()) != -1 && c != '\n') {
-            if (c != '\r') sb.append((char) c);
-        }
-        return sb.toString();
-    }
-
-    public void afficherImageOctet(){
-        for(int i = 0; i<hauteur; i++){
-            for(int j = 0; j<largeur; j++){
-                System.out.print(image[i][j].getNuanceGris());
-                System.out.print(" ");
-            }
-            System.out.print("\n");
-        }
-    }
 
     public String getNom() {
         return nom;
@@ -90,5 +72,28 @@ public class Image {
     public void setCheminFichier(String cheminFichier) {
         this.cheminFichier = cheminFichier;
     }
+
+    private String lireLigne(InputStream in) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int c;
+        while ((c = in.read()) != -1 && c != '\n') {
+            if (c != '\r') sb.append((char) c);
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i = 0; i<hauteur; i++){
+            for(int j = 0; j<largeur; j++){
+                stringBuilder.append(image[i][j].getNuanceGris());
+                stringBuilder.append(" ");
+            }
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
+    }
+
 
 }
