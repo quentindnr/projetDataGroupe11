@@ -1,6 +1,6 @@
 public class Vecteur {
     private int[] composantes;
-    private int dimension; 
+    private int dimensions;
     private int norme;
 
     public Vecteur(int[] composantes, int dimension){

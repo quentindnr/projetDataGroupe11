@@ -73,6 +73,30 @@ public class Image {
         this.cheminFichier = cheminFichier;
     }
 
+    public int getLargeur() {
+        return largeur;
+    }
+
+    public void setLargeur(int largeur) {
+        this.largeur = largeur;
+    }
+
+    public int getHauteur() {
+        return hauteur;
+    }
+
+    public void setHauteur(int hauteur) {
+        this.hauteur = hauteur;
+    }
+
+    public PixelGris[][] getImage() {
+        return image;
+    }
+
+    public void setImage(PixelGris[][] image) {
+        this.image = image;
+    }
+
     private String lireLigne(InputStream in) throws IOException {
         StringBuilder sb = new StringBuilder();
         int c;
@@ -93,6 +117,13 @@ public class Image {
             stringBuilder.append("\n");
         }
         return stringBuilder.toString();
+    }
+
+    public Vecteur toVecteur(){
+        Vecteur vecteur;
+        int[] vecteurColonne;
+
+
     }
 
 

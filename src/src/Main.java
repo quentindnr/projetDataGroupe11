@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Hello World");
         Image image = new Image("image_test", "../archive/s1/1.pgm");
-        image.afficherImageOctet();
+        System.out.println(image.toString());
 
     }
 }
