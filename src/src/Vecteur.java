@@ -1,11 +1,12 @@
 public class Vecteur {
     private int[] composantes;
-    private int dimensions; 
+    private int dimension; 
     private int norme;
 
-    public Vecteur(){
-        
-    }
+    public Vecteur(int[] composantes, int dimension){
+        this.composantes = composantes;
+        this.dimensions = dimension;
+    }   
     public int getComposantesAvecIndex (int i ){
         return composantes[i];
     }
