@@ -57,8 +57,8 @@ public class SystemeReconnaissance {
      * @return Une instance de ResultatIdentification qui contient les resultat de
      *         l'identification
      */
-    public ResultatIdentification identifier(Image imageTest) {
+    //public ResultatIdentification identifier(Image imageTest) {
         // TODO
-    }
+    //}
 
 }

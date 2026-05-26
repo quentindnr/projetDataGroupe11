@@ -1,0 +1,94 @@
+import java.io.*;
+import java.util.Scanner;
+
+public class Image {
+
+    private String nom;
+    private int cote;
+    private int largeur;
+    private int hauteur;
+    private String cheminFichier;
+    private PixelGris[][] image;
+
+    public Image(String nom, String cheminFichier) {
+        this.nom = nom;
+        this.cheminFichier = cheminFichier;
+
+        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cheminFichier)))) {
+
+            // Lire le "nombre magique"
+            String magique = lireLigne(in);
+            if (!magique.equals("P5")) {
+                throw new IOException("Format non supporté : " + magique);
+            }
+
+            // Lire la ligne suivante, en sautant les commentaires
+            String ligne = lireLigne(in);
+            while (ligne.startsWith("#")) {
+                ligne = lireLigne(in);
+            }
+
+            // Largeur et hauteur
+            String[] dims = ligne.trim().split("\\s+");
+            this.largeur = Integer.parseInt(dims[0]);
+            this.hauteur = Integer.parseInt(dims[1]);
+
+
+            // Lire les pixels (données binaires : 1 octet par pixel)
+            this.image = new PixelGris[hauteur][largeur];
+            for (int y = 0; y < hauteur; y++) {
+                for (int x = 0; x < largeur; x++) {
+                    this.image[y][x] = new PixelGris(x,y,in.readUnsignedByte());
+                }
+            }
+
+
+        } catch (IOException e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
+    }
+
+    private String lireLigne(InputStream in) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int c;
+        while ((c = in.read()) != -1 && c != '\n') {
+            if (c != '\r') sb.append((char) c);
+        }
+        return sb.toString();
+    }
+
+    public void afficherImageOctet(){
+        for(int i = 0; i<hauteur; i++){
+            for(int j = 0; j<largeur; j++){
+                System.out.print(image[i][j].getNuanceGris());
+                System.out.print(" ");
+            }
+            System.out.print("\n");
+        }
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public int getCote() {
+        return cote;
+    }
+
+    public void setCote(int cote) {
+        this.cote = cote;
+    }
+
+    public String getCheminFichier() {
+        return cheminFichier;
+    }
+
+    public void setCheminFichier(String cheminFichier) {
+        this.cheminFichier = cheminFichier;
+    }
+
+}

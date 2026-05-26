@@ -40,14 +40,14 @@ public class SousEspace {
      * 
      * @param image L'image a projeter
      */
-    public Image projeter(Image image) {
+    public void projeter(Image image) {
         // TODO
     }
 
     /**
      * Reconstruit une image a partir de la projection
      */
-    public Image reconstruire(Image projection) {
+    public void reconstruire(Image projection) {
         // TODO
     }
 
@@ -66,7 +66,7 @@ public class SousEspace {
      * @param k L'indice k
      * @return La valeur de la variance expliquee a l'indice k
      */
-    public float calculerVarianceExplique(int k) {
+    public void calculerVarianceExplique(int k) {
         // TODO
     }
 
@@ -75,7 +75,7 @@ public class SousEspace {
      * 
      * @return La valeur de la variance expliquee cumulee
      */
-    public float calculerVarianceExpliqueCumule() {
+    public void calculerVarianceExpliqueCumule() {
         // TODO
     }
 }

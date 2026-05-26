@@ -1,5 +1,5 @@
 public class Vecteur {
-    private int composantes; 
+    private int[] composantes;
     private int dimensions; 
     private int norme;
 
@@ -41,7 +41,7 @@ public class Vecteur {
 
     }
 
-    public int produitScalaire(Vecteur v){
+    public void produitScalaire(Vecteur v){
 
     }
 
@@ -49,7 +49,7 @@ public class Vecteur {
         return norme;
     }
 
-    public int distance(Vecteur v){
+    public void distance(Vecteur v){
         
     }
 }
