@@ -126,7 +126,7 @@ public class Image {
 
         for(int i = 0; i<this.getHauteur(); i++){
             for(int j = 0; j<this.getLargeur(); j++){
-                if(i%2 != 0){
+                if(i%2 == 0){
                     vecteurColonne[indice] = this.getImage(i,j);
                 }else{
                     vecteurColonne[indice] = this.getImage(i,this.getLargeur()-1-j);
