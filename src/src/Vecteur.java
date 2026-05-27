@@ -24,18 +24,11 @@ public class Vecteur {
     }
 
     public void ajouter(Vecteur v){
-        if (this.dimensions != v.dimensions) {
-            throw new IllegalArgumentException("Les vecteurs doivent avoir le même nombre de dimensions pour être ajoutés.");
-        }
-        for (int i = 0; i < this.dimensions; i++) {
-            this.composantes[i] += v.composantes[i];
-        }
+        
     }
 
     public void soustraire(Vecteur v){
-        if (this.dimensions != v.dimensions) {
-            throw new IllegalArgumentException("Les vecteurs doivent avoir le même nombre de dimensions pour être ajoutés.");
-        }
+       
     }
 
     public void multiplier(Vecteur v){
