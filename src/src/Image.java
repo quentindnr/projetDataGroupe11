@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.Scanner;
 
+import static java.lang.Math.max;
+
 public class Image {
 
     private String nom;
@@ -10,42 +12,8 @@ public class Image {
     private String cheminFichier;
     private PixelGris[][] image;
 
-    public Image(String nom, String cheminFichier) {
+    public Image(String nom) {
         this.nom = nom;
-        this.cheminFichier = cheminFichier;
-
-        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cheminFichier)))) {
-
-            // Lire la signature du fichier
-            String magique = lireLigne(in);
-            if (!magique.equals("P5")) {
-                throw new IOException("Ce format n'est pas supporté");
-            }
-
-            // Lire la ligne suivante, en sautant les commentaires
-            String ligne = lireLigne(in);
-            while (ligne.startsWith("#")) {
-                ligne = lireLigne(in);
-            }
-
-            // Largeur et hauteur
-            String[] dims = ligne.trim().split("\\s+");
-            this.largeur = Integer.parseInt(dims[0]);
-            this.hauteur = Integer.parseInt(dims[1]);
-
-
-            // Lire les pixels (données binaires : 1 octet par pixel)
-            this.image = new PixelGris[hauteur][largeur];
-            for (int y = 0; y < hauteur; y++) {
-                for (int x = 0; x < largeur; x++) {
-                    this.image[y][x] = new PixelGris(x,y,in.readUnsignedByte());
-                }
-            }
-
-
-        } catch (IOException e) {
-            System.out.println("Erreur : " + e.getMessage());
-        }
     }
 
 
@@ -62,7 +30,7 @@ public class Image {
     }
 
     public void setCote(int cote) {
-        this.cote = cote;
+        this.cote = max(cote,0);
     }
 
     public String getCheminFichier() {
@@ -74,7 +42,7 @@ public class Image {
     }
 
     public int getLargeur() {
-        return largeur;
+        return max(largeur,0);
     }
 
     public void setLargeur(int largeur) {
@@ -86,7 +54,7 @@ public class Image {
     }
 
     public void setHauteur(int hauteur) {
-        this.hauteur = hauteur;
+        this.hauteur = max(hauteur,0);
     }
 
     public int getImage(int x, int y) {
@@ -136,6 +104,67 @@ public class Image {
         }
         vecteur = new Vecteur(vecteurColonne, this.getHauteur()*this.getLargeur());
         return vecteur;
+    }
+
+    public void chargerImage(String cheminFichier){
+        try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cheminFichier)))) {
+
+            // Lire la signature du fichier
+            String magique = lireLigne(in);
+            if (!magique.equals("P5")) {
+                throw new IOException("Ce format n'est pas supporté");
+            }
+
+            // Lire la ligne suivante, en sautant les commentaires
+            String ligne = lireLigne(in);
+            while (ligne.startsWith("#")) {
+                ligne = lireLigne(in);
+            }
+
+            // Largeur et hauteur
+            String[] dims = ligne.trim().split("\\s+");
+            this.largeur = Integer.parseInt(dims[0]);
+            this.hauteur = Integer.parseInt(dims[1]);
+
+
+            // Lire les pixels
+            this.image = new PixelGris[hauteur][largeur];
+            for (int y = 0; y < hauteur; y++) {
+                for (int x = 0; x < largeur; x++) {
+                    this.image[y][x] = new PixelGris(x,y,in.readUnsignedByte());
+                }
+            }
+
+
+        } catch (IOException e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
+    }
+
+    public static Image fromVecteur(Vecteur vecteur, String nom) {
+        int largeurImage = 92;
+        int hauteurImage = 112;
+
+        Image image = new Image(nom);
+        image.setLargeur(largeurImage);
+        image.setHauteur(hauteurImage);
+        image.image = new PixelGris[hauteurImage][largeurImage];   // ← initialisation
+
+        int indice = 0;
+        for (int i = 0; i < hauteurImage; i++) {
+            for (int j = 0; j < largeurImage; j++) {
+                int x;
+                if (i % 2 == 0) {
+                    x = j;
+                } else {
+                    x = largeurImage - 1 - j;
+                }
+                int valeur = vecteur.getComposantesAvecIndex(indice);
+                image.image[i][x] = new PixelGris(x, i, valeur);
+                indice++;
+            }
+        }
+        return image;
     }
 
 

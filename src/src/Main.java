@@ -3,11 +3,14 @@
 public class Main {
     public static void main(String[] args) {
         System.out.println("Hello World");
-        Image image = new Image("image_test", "../archive/s1/1.pgm");
+        Image image = new Image("image_test");
+        image.chargerImage("../archive/s1/1.pgm");
         Vecteur vecteur = image.toVecteur();
         System.out.println(image.toString());
-        System.out.println(vecteur.toString());
+        //System.out.println(vecteur.toString());
         System.out.println("Nombre de dimensions du vecteur colonne : " + vecteur.getDimensions());
+        Image image2 = Image.fromVecteur(vecteur, "test");
+        System.out.println(image2.toString());
 
     }
 }
