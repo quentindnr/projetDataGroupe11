@@ -89,8 +89,8 @@ public class Image {
         this.hauteur = hauteur;
     }
 
-    public PixelGris[][] getImage() {
-        return image;
+    public int getImage(int x, int y) {
+        return this.image[x][y].getNuanceGris();
     }
 
     public void setImage(PixelGris[][] image) {
@@ -121,9 +121,21 @@ public class Image {
 
     public Vecteur toVecteur(){
         Vecteur vecteur;
-        int[] vecteurColonne;
+        int[] vecteurColonne = new int[this.hauteur*this.largeur];
+        int indice = 0;
 
-
+        for(int i = 0; i<this.getHauteur(); i++){
+            for(int j = 0; j<this.getLargeur(); j++){
+                if(i%2 != 0){
+                    vecteurColonne[indice] = this.getImage(i,j);
+                }else{
+                    vecteurColonne[indice] = this.getImage(i,this.getLargeur()-1-j);
+                }
+                indice++;
+            }
+        }
+        vecteur = new Vecteur(vecteurColonne, this.getHauteur()*this.getLargeur());
+        return vecteur;
     }
 
 

@@ -6,7 +6,18 @@ public class Vecteur {
     public Vecteur(int[] composantes, int dimension){
         this.composantes = composantes;
         this.dimensions = dimension;
-    }   
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(int i = 0; i<this.dimensions-1; i++){
+            stringBuilder.append(this.composantes[i]);
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
+    }
+
     public int getComposantesAvecIndex (int i ){
         return composantes[i];
     }
