@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.Scanner;
 
 import static java.lang.Math.max;
+import static java.lang.Math.toIntExact;
 
 public class Image {
 
@@ -106,7 +107,7 @@ public class Image {
         return vecteur;
     }
 
-    public void chargerImage(String cheminFichier){
+    public void chargerImagePGM(String cheminFichier){
         try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(cheminFichier)))) {
 
             // Lire la signature du fichier
@@ -167,5 +168,47 @@ public class Image {
         return image;
     }
 
+
+    public void convertirEnGris() {
+
+        try (DataInputStream in = new DataInputStream(
+                new BufferedInputStream(new FileInputStream(cheminFichier)))) {
+
+            if (lireLigne(in).equals("P3")) {
+
+                // Largeur et hauteur (en sautant les commentaires)
+                String ligne = lireLigne(in);
+                while (ligne.startsWith("#")) {
+                    ligne = lireLigne(in);
+                }
+                String[] dims = ligne.trim().split("\\s+");
+                this.largeur = Integer.parseInt(dims[0]);
+                this.hauteur = Integer.parseInt(dims[1]);
+
+                // On lit (et ignore) la valeur max
+                ligne = lireLigne(in);
+
+                // Un seul Scanner, créé après l'en-tête, sur le même flux
+                Scanner scanner = new Scanner(in);
+
+                this.image = new PixelGris[hauteur][largeur];
+                for (int y = 0; y < hauteur; y++) {
+                    for (int x = 0; x < largeur; x++) {
+                        int R = scanner.nextInt();
+                        int G = scanner.nextInt();
+                        int B = scanner.nextInt();
+                        int gris = (int) Math.round(0.299 * R + 0.587 * G + 0.114 * B);
+                        this.image[y][x] = new PixelGris(x, y, gris);
+                    }
+                }
+
+            } else {
+                throw new IOException("Format non supporté");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
+    }
 
 }

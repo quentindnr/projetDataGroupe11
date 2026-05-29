@@ -6,9 +6,9 @@ public class Main {
         String path2 = System.getProperty("user.dir") + "/archive/test.pgm";
         System.out.println("Hello World");
         Image image = new Image("image_test");
-        image.chargerImage(path);
+        image.chargerImagePGM(path);
         Image image2 = new Image("Image_test2");
-        image2.chargerImage(path2);
+        image2.chargerImagePGM(path2);
         Vecteur vecteur = image.toVecteur();
         Vecteur vecteur2 = image2.toVecteur();  
         System.out.println(image.toString());
