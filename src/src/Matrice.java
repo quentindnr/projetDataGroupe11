@@ -21,6 +21,7 @@ public class Matrice {
      */
     public Vecteur calculerVecteurMoyen() {
         // TODO
+        return null;
     }
 
     /**
@@ -28,6 +29,7 @@ public class Matrice {
      */
     public float[] calculerValeursPropres() {
         // TODO
+        return null;
     }
 
     /**
@@ -39,6 +41,7 @@ public class Matrice {
      */
     public Vecteur calculerVecteurPropre(float valeurPropre) {
         // TODO
+        return null;
     }
 
     /**
