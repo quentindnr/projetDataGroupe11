@@ -71,30 +71,7 @@ public class Matrice {
      * @param valeurPropre La valeur propre du vecteur propre recherche
      */
     public Vecteur calculerVecteurPropre(float valeurPropre) {
-        var eig = this.matrice.eig();
-        int numEigenvalues = eig.getNumberOfEigenvalues();
         
-        // Trouver l'indice de la valeur propre correspondante
-        int index = -1;
-        for(int i = 0; i < numEigenvalues; i++){
-            if(Math.abs((float)eig.getEigenvalue(i).real - valeurPropre) < 1e-6){
-                index = i;
-                break;
-            }
-        }
-        
-        if(index == -1){
-            throw new IllegalArgumentException("Valeur propre non trouvee: " + valeurPropre);
-        }
-        
-        // Recuperer le vecteur propre
-        SimpleMatrix eigenvector = eig.getEigenvector(index);
-        double[] composantes = new double[eigenvector.getNumRows()];
-        for(int i = 0; i < eigenvector.getNumRows(); i++){
-            composantes[i] = eigenvector.get(i, 0);
-        }
-        
-        return new Vecteur(composantes, composantes.length);
     }
 
     /**
