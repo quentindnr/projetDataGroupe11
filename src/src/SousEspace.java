@@ -1,31 +1,24 @@
 /**
- * Une classe qui represente un sous-ensemble
+ * Une classe qui represente le sous-ensemble de projection
  */
 public class SousEspace {
     /**
-     * Le vecteur correspondant au visage moyen
+     * La matrice du sous-ensemble
      */
-    private Vecteur visageMoyen;
+    private Matrice matrice;
     /**
-     * La dimension du sous-espace
+     * Les eigenfaces du sous-ensemble
      */
-    private int dimension;
-    /**
-     * Le nombre d'eigen faces
-     */
-    private int nbEigenFaces;
+    private Eigenface[] eigenfaces;
 
     /**
-     * Cree une instance de SousEspace
+     * Une classe qui represente le sous-ensemble de projection
      * 
-     * @param visageMoyen  Le vecteur correspondant au visage moyen
-     * @param dimension    La dimension du sous-espace
-     * @param nbEigenFaces Le nombre d'eigen faces
+     * @param vecteurs Les vecteurs qui forment le sous-ensemble
      */
-    public SousEspace(Vecteur visageMoyen, int dimension, int nbEigenFaces) {
-        this.visageMoyen = visageMoyen;
-        this.dimension = dimension;
-        this.nbEigenFaces = nbEigenFaces;
+    public SousEspace(Vecteur[] vecteurs) {
+        this.matrice = new Matrice(vecteurs);
+        this.eigenfaces = null;
     }
 
     /**
@@ -33,10 +26,16 @@ public class SousEspace {
      */
     public void calculerEigenface() {
         // TODO
+        // calc vecteur moyen
+        // centrer la matrice
+        // calculer les valeurs propres
+        // prendre les n plus grandes (methode du coude)
+        // pour chacune, calculer les vecteurs propres
+        // construire la liste les eigenfaces et mettre dans eigenfaces
     }
 
     /**
-     * Projete l'image sur les eigenfaces
+     * Projete l'image sur ce sous-ensemble
      * 
      * @param image L'image a projeter
      */
@@ -48,34 +47,6 @@ public class SousEspace {
      * Reconstruit une image a partir de la projection
      */
     public void reconstruire(Image projection) {
-        // TODO
-    }
-
-    /**
-     * Calcule le visage moyen de ce sous-ensemble
-     * 
-     * @param images La base d'images
-     */
-    public void calculerVisageMoyen(Image[] images) {
-        // TODO
-    }
-
-    /**
-     * Calcule la variance expliquee a l'indice k
-     * 
-     * @param k L'indice k
-     * @return La valeur de la variance expliquee a l'indice k
-     */
-    public void calculerVarianceExplique(int k) {
-        // TODO
-    }
-
-    /**
-     * Calcule la variance expliquee cumulee (a tout les indices k)
-     * 
-     * @return La valeur de la variance expliquee cumulee
-     */
-    public void calculerVarianceExpliqueCumule() {
         // TODO
     }
 }

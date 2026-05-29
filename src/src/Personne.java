@@ -3,11 +3,11 @@ public class Personne {
     private String nom;
     private Image image;
 
-    public Personne(String nom){
+    public Personne(String nom) {
         this.nom = nom;
     }
 
-    public void ajouterImage(Image image){
+    public void ajouterImage(Image image) {
         this.image = image;
     }
 
@@ -15,8 +15,7 @@ public class Personne {
         return nom;
     }
 
-    public Image getImage(){
+    public Image getImage() {
         return image;
     }
-
 }

@@ -8,7 +8,7 @@ public class SystemeReconnaissance {
     private SousEspace sousEspace;
     /**
      * Le seuil de reconnaissance a partir duquel on considere une personne inconnue
-     * Il correspond a la distance max entre 2 images apres l'acp
+     * Il correspond a la distance max entre 2 images lors de la reconnaissance
      */
     private float seuilReconnaissance;
     /**
@@ -17,17 +17,17 @@ public class SystemeReconnaissance {
     private Personne[] personnes;
 
     /**
+     * Une classe qui represente le systeme de reconnaissance faciale
      * 
-     * @param sousEspace          Le sous-espace
      * @param seuilReconnaissance Le seuil de reconnaissance a partir duquel on
      *                            considere une personne inconnue
      *                            Il correspond a la distance max entre 2 images
-     *                            apres l'acp
+     *                            lors de la reconnaissances
      * @param personnes           Les personnes qui forment notre base de
      *                            reconnaissance
      */
-    public SystemeReconnaissance(SousEspace sousEspace, float seuilReconnaissance, Personne[] personnes) {
-        this.sousEspace = sousEspace;
+    public SystemeReconnaissance(float seuilReconnaissance, Personne[] personnes) {
+        this.sousEspace = null;
         this.seuilReconnaissance = seuilReconnaissance;
         this.personnes = personnes;
     }
@@ -42,12 +42,22 @@ public class SystemeReconnaissance {
     }
 
     /**
-     * Entraine une image
-     * 
-     * @param image L'image a entrainer
+     * Entraine le systeme sur la base de personnes
      */
-    public void entrainer(Image image) {
+    public void entrainer() {
         // TODO
+        // un truc de ce style
+        // on initialise sous espace et on l'entraine (ie on construit la base / calc
+        // les eigenfaces)
+
+        Vecteur[] vecteurs = new Vecteur[personnes.length];
+
+        for (int i = 0; i < personnes.length; i++) {
+            vecteurs[i] = personnes[i].getImage().toVecteur();
+        }
+
+        sousEspace = new SousEspace(vecteurs);
+        sousEspace.calculerEigenface();
     }
 
     /**
@@ -57,8 +67,9 @@ public class SystemeReconnaissance {
      * @return Une instance de ResultatIdentification qui contient les resultat de
      *         l'identification
      */
-    //public ResultatIdentification identifier(Image imageTest) {
+    public ResultatIdentification identifier(Image imageTest) {
         // TODO
-    //}
+        // avant tout, faut check si sousEspace est non null (ie le model est entraine)
+    }
 
 }
