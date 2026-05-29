@@ -4,7 +4,6 @@ public class Main {
     public static void main(String[] args) {
         String path = System.getProperty("user.dir") + "/archive/test.pgm";
         String path2 = System.getProperty("user.dir") + "/archive/test.pgm";
-        System.out.println("Hello World");
         Image image = new Image("image_test");
         image.chargerImagePGM(path);
         Image image2 = new Image("Image_test2");
@@ -12,6 +11,10 @@ public class Main {
         Vecteur vecteur = image.toVecteur();
         Vecteur vecteur2 = image2.toVecteur();  
         System.out.println(image.toString());
+
+        Image imagePPM = new Image("imagePPM");
+        imagePPM.chargerImagePPM("archive/imagePPM/poivron_p3.ppm");
+        imagePPM.creerFichierPGM("archive/imagePPM/poivron.pgm");
 
     }
 }

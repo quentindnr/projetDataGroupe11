@@ -70,6 +70,7 @@ public class SystemeReconnaissance {
     public ResultatIdentification identifier(Image imageTest) {
         // TODO
         // avant tout, faut check si sousEspace est non null (ie le model est entraine)
+        return null;
     }
 
 }

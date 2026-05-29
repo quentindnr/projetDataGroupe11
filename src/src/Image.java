@@ -169,7 +169,9 @@ public class Image {
     }
 
 
-    public void convertirEnGris() {
+    public void chargerImagePPM(String cheminFichier) {
+
+        this.setCheminFichier(cheminFichier);
 
         try (DataInputStream in = new DataInputStream(
                 new BufferedInputStream(new FileInputStream(cheminFichier)))) {
@@ -204,6 +206,28 @@ public class Image {
 
             } else {
                 throw new IOException("Format non supporté");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
+    }
+
+    public void creerFichierPGM(String cheminSortie) {
+
+        try (PrintWriter out = new PrintWriter(
+                new BufferedWriter(new FileWriter(cheminSortie)))) {
+
+            // En-tête PGM ASCII
+            out.println("P2");
+            out.println(largeur + " " + hauteur);
+            out.println(255);
+
+            for (int y = 0; y < hauteur; y++) {
+                for (int x = 0; x < largeur; x++) {
+                    int g = image[y][x].getNuanceGris();
+                    out.println(g);
+                }
             }
 
         } catch (IOException e) {
