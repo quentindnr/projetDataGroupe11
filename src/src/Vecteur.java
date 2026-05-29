@@ -1,13 +1,13 @@
 public class Vecteur {
-    private int[] composantes;
+    private double[] composantes;
     private int dimensions;
     private int norme;
 
-    public Vecteur(int[] composantes, int dimension){
+    public Vecteur(double[] composantes, int dimension){
         this.composantes = composantes;
         this.dimensions = dimension;
     }   
-    public int getComposantesAvecIndex (int i ){
+    public double getComposantesAvecIndex (int i ){
         return composantes[i];
     }
 
@@ -51,11 +51,11 @@ public class Vecteur {
         }
     }
 
-    public int[][] produitScalaire(Vecteur v){
+    public double[][] produitScalaire(Vecteur v){
         if (this.dimensions != v.dimensions) {
             throw new IllegalArgumentException("Les vecteurs doivent avoir le même nombre de dimensions pour être ajoutés.");
         }
-        int[][] result = new int[this.dimensions][this.dimensions];
+        double[][] result = new double[this.dimensions][this.dimensions];
         for (int i = 0; i < this.dimensions; i++) {
             for (int j = 0; j < this.dimensions; j++) {
                 result[i][j] = this.composantes[i] * v.composantes[j];

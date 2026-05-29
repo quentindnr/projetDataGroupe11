@@ -90,7 +90,7 @@ public class Image {
 
     public Vecteur toVecteur(){
         Vecteur vecteur;
-        int[] vecteurColonne = new int[this.hauteur*this.largeur];
+        double[] vecteurColonne = new double[this.hauteur*this.largeur];
         int indice = 0;
 
         for(int i = 0; i<this.getHauteur(); i++){
