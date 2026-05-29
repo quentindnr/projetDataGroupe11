@@ -10,10 +10,8 @@ public class Main {
         Image image2 = new Image("Image_test2");
         image2.chargerImage(path2);
         Vecteur vecteur = image.toVecteur();
-        Vecteur vecteur2 = image2.toVecteur();
+        Vecteur vecteur2 = image2.toVecteur();  
         System.out.println(image.toString());
-        vecteur.produitScalaire(vecteur2);
-        System.out.print(vecteur.toString());
 
     }
 }
