@@ -18,10 +18,10 @@ public class Matrice {
      * @param vecteurs Les vecteurs qui forment la matrice
      */
     public Matrice(Vecteur[] vecteurs) {
-        this.matrice = new SimpleMatrix(vecteurs.length, vecteurs[0].getDimensions());
+        this.matrice = new SimpleMatrix(vecteurs.length, vecteurs[0].getDimension());
         for (int i = 0; i < vecteurs.length; i++) {
             Vecteur vecteur = vecteurs[i];
-            for (int j = 0; j < vecteur.getDimensions(); j++) {
+            for (int j = 0; j < vecteur.getDimension(); j++) {
                 matrice.set(i, j, vecteur.getComposantesAvecIndex(j));
             }
         }
@@ -30,9 +30,6 @@ public class Matrice {
     /**
      * Calcule le vecteur moyen
      */
-    public Vecteur calculerVecteurMoyen() {
-        // TODO
-        return null;
     public Vecteur calculerVecteurMoyen(SimpleMatrix matrice) {
         int nbVecteurs = matrice.getNumRows();
         int dimension  = matrice.getNumCols();
@@ -53,9 +50,6 @@ public class Matrice {
     /**
      * Calcule les valeurs propres de cette matrice
      */
-    public float[] calculerValeursPropres() {
-        // TODO
-        return null;
     public float[] calculerValeursPropres(SimpleMatrix matrice) {
 
         var eig = this.matrice.eig();
@@ -71,7 +65,7 @@ public class Matrice {
 
     /**
      * Calcule le vecteur propre d'une valeur propre donne
-     * Voir {@link #calculerValeursPropres() calculerValeursPropres} pour le calcul
+     * Voir {@link #calculerValeursPropres(SimpleMatrix matrice) calculerValeursPropres} pour le calcul
      * des valeurs prorpes
      * 
      * @param valeurPropre La valeur propre du vecteur propre recherche
