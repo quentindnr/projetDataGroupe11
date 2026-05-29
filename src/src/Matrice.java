@@ -1,19 +1,29 @@
+import org.ejml.simple.SimpleMatrix;
+
 /**
- * Une classe qui represente une matrice sous forme d'un tableau de vecteurs
+ * Une classe qui represente la matrice de vecteurs sous forme d'une
+ * SimpleMatrix
  */
 public class Matrice {
     /**
-     * Une classe qui represente une matrice sous forme d'un tableau de vecteurs
+     * La matrice de vecteurs
      */
-    private Vecteur[] vecteurs;
+    private SimpleMatrix matrice;
 
     /**
-     * Une classe qui represente une matrice sous forme d'un tableau de vecteurs
+     * Une classe qui represente la matrice de vecteurs sous forme d'une
+     * SimpleMatrix
      * 
      * @param vecteurs Les vecteurs qui forment la matrice
      */
     public Matrice(Vecteur[] vecteurs) {
-        this.vecteurs = vecteurs;
+        this.matrice = new SimpleMatrix(vecteurs.length, vecteurs[0].getDimensions(), int.class);
+        for (int i = 0; i < vecteurs.length; i++) {
+            Vecteur vecteur = vecteurs[i];
+            for (int j = 0; j < vecteur.getDimensions(); j++) {
+                matrice.set(i, j, vecteur.getComposantesAvecIndex(j));
+            }
+        }
     }
 
     /**
