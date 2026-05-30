@@ -53,7 +53,7 @@ public class SystemeReconnaissance {
         Vecteur[] vecteurs = new Vecteur[personnes.length];
 
         for (int i = 0; i < personnes.length; i++) {
-            vecteurs[i] = personnes[i].getImage().toVecteur();
+            vecteurs[i] = personnes[i].getImageIndice(0).toVecteur();
         }
 
         sousEspace = new SousEspace(vecteurs);
