@@ -16,6 +16,10 @@ public class Vecteur {
         composantes[i] = value;
     }
 
+    public double[] getComposantes(){
+        return this.composantes;
+    }
+
     public int getDimension() {
         return dimension;
     }
