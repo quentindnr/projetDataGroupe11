@@ -42,19 +42,11 @@ public class Matrice {
      * @param vecteurs Les vecteurs qui forment la matrice
      */
     public Matrice(Vecteur[] vecteurs) {
-<<<<<<< HEAD
         this.matrice = new SimpleMatrix(vecteurs[0].getDimension(), vecteurs.length);
         for (int i = 0; i < vecteurs.length; i++) {
             Vecteur vecteur = vecteurs[i];
             for (int j = 0; j < vecteur.getDimension(); j++) {
                 matrice.set(j, i, vecteur.getComposantesAvecIndex(j));
-=======
-        this.matrice = new SimpleMatrix(vecteurs.length, vecteurs[0].getDimension());
-        for (int i = 0; i < vecteurs.length; i++) {
-            Vecteur vecteur = vecteurs[i];
-            for (int j = 0; j < vecteur.getDimension(); j++) {
-                matrice.set(i, j, vecteur.getComposantesAvecIndex(j));
->>>>>>> 1ce29ae64419ce4d6fbdbb5b7fc952b79fd4dfa4
             }
         }
     }
@@ -128,7 +120,6 @@ public class Matrice {
      * 
      * @param valeurPropre La valeur propre du vecteur propre recherche
      */
-<<<<<<< HEAD
     public SimpleMatrix calculerVecteurPropre(float valeurPropre){
         if (this.evdCache == null) {
             throw new IllegalStateException("Les valeurs propres doivent être calculées avant de calculer les vecteurs propres.");
@@ -142,12 +133,6 @@ public class Matrice {
 
         throw new IllegalArgumentException("Aucun vecteur propre trouvé pour la valeur propre donnée: " + valeurPropre);
     }   
-=======
-    public Vecteur calculerVecteurPropre(float valeurPropre) {
-        // TODO
-        return null;
-    }
->>>>>>> 1ce29ae64419ce4d6fbdbb5b7fc952b79fd4dfa4
 
     /**
      * Calcule la variance expliquee a l'indice k
