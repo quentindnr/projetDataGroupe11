@@ -1,33 +1,80 @@
+/**
+ * Représente un vecteur de dimension fixe.
+ * 
+ * Ce vecteur encapsule un tableau de composantes et fournit des opérations
+ * de base telles que l'ajout, la soustraction, la multiplication composante à composante,
+ * le calcul du produit scalaire et de la distance.
+ * 
+ */
 public class Vecteur {
     private double[] composantes;
     private int dimension;
     private int norme;
 
+    /**
+     * Crée un vecteur à partir de ses composantes et de sa dimension.
+     *
+     * @param composantes le tableau des composantes du vecteur
+     * @param dimension   la dimension du vecteur
+     */
     public Vecteur(double[] composantes, int dimension) {
         this.composantes = composantes;
         this.dimension = dimension;
     }
 
+    /**
+     * Retourne la composante du vecteur à l'index spécifié.
+     *
+     * @param i l'index de la composante
+     * @return la valeur de la composante
+     */
     public double getComposantesAvecIndex(int i) {
         return composantes[i];
     }
 
+    /**
+     * Définit la composante du vecteur à l'index spécifié.
+     *
+     * @param i     l'index de la composante
+     * @param value la nouvelle valeur de la composante
+     */
     public void setComposantesAvecIndex(int i, int value) {
         composantes[i] = value;
     }
 
-    public double[] getComposantes(){
+    /**
+     * Retourne le tableau des composantes du vecteur.
+     *
+     * @return le tableau des composantes
+     */
+    public double[] getComposantes() {
         return this.composantes;
     }
 
+    /**
+     * Retourne la dimension du vecteur.
+     *
+     * @return la dimension
+     */
     public int getDimension() {
         return dimension;
     }
 
+    /**
+     * Définit la dimension du vecteur.
+     *
+     * @param dimension la nouvelle dimension
+     */
     public void setDimension(int dimension) {
         this.dimension = dimension;
     }
 
+    /**
+     * Ajoute les composantes d'un autre vecteur à ce vecteur.
+     *
+     * @param v le vecteur à ajouter
+     * @throws IllegalArgumentException si les dimensions sont différentes
+     */
     public void ajouter(Vecteur v) {
         if (this.dimension != v.dimension) {
             throw new IllegalArgumentException("Les vecteurs doivent avoir la même dimension pour être ajoutés.");
@@ -37,6 +84,12 @@ public class Vecteur {
         }
     }
 
+    /**
+     * Soustrait les composantes d'un autre vecteur de ce vecteur.
+     *
+     * @param v le vecteur à soustraire
+     * @throws IllegalArgumentException si les dimensions sont différentes
+     */
     public void soustraire(Vecteur v) {
         if (this.dimension != v.dimension) {
             throw new IllegalArgumentException("Les vecteurs doivent avoir la même dimension pour être soustraits.");
@@ -46,8 +99,13 @@ public class Vecteur {
         }
     }
 
+    /**
+     * Multiplie chaque composante de ce vecteur par la composante correspondante d'un autre vecteur.
+     *
+     * @param v le vecteur à multiplier
+     * @throws IllegalArgumentException si les dimensions sont différentes
+     */
     public void multiplier(Vecteur v) {
-
         if (this.dimension != v.dimension) {
             throw new IllegalArgumentException("Les vecteurs doivent avoir la même dimension pour être multipliés.");
         }
@@ -56,6 +114,13 @@ public class Vecteur {
         }
     }
 
+    /**
+     * Calcule le produit extérieur de ce vecteur avec un autre vecteur.
+     *
+     * @param v le vecteur avec lequel calculer le produit scalaire
+     * @return une matrice de dimension x dimension contenant les produits des composantes
+     * @throws IllegalArgumentException si les dimensions sont différentes
+     */
     public double[][] produitScalaire(Vecteur v) {
         if (this.dimension != v.dimension) {
             throw new IllegalArgumentException("Les vecteurs doivent avoir le même nombre de dimension pour être ajoutés.");
@@ -69,6 +134,11 @@ public class Vecteur {
         return result;
     }
 
+    /**
+     * Calcule la norme euclidienne du vecteur.
+     *
+     * @return la norme du vecteur
+     */
     public int getNorme() {
         int sum = 0;
         for (int i = 0; i < this.dimension; i++) {
@@ -78,6 +148,13 @@ public class Vecteur {
         return norme;
     }
 
+    /**
+     * Calcule la distance euclidienne entre ce vecteur et un autre vecteur.
+     *
+     * @param v le vecteur de comparaison
+     * @return la distance entre les deux vecteurs
+     * @throws IllegalArgumentException si les dimensions sont différentes
+     */
     public double distance(Vecteur v) {
         if (this.dimension != v.dimension) {
             throw new IllegalArgumentException("Les vecteurs doivent avoir la même dimension pour calculer leur distance.");
@@ -89,6 +166,11 @@ public class Vecteur {
         return Math.sqrt(sum);
     }
 
+    /**
+     * Retourne une représentation textuelle du vecteur.
+     *
+     * @return une chaîne contenant les composantes séparées par des retours à la ligne
+     */
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
