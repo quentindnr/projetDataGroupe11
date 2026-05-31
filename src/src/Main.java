@@ -1,71 +1,102 @@
-import java.io.File; /*Représenter un fichier sur le disque*/
-import java.io.FileNotFoundException; /*Gérer l'erreur si fichier absent*/
-import java.util.Scanner; /*Lire la console et les fichiers*/
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        String path = "";
+        boolean fichierValide = false;
 
-        /* Demande du chemin */
-        System.out.print("Entrez le chemin de l'image PGM :");
-        String path = scanner.nextLine();
+        /* 1. Demande du chemin en boucle jusqu'à validation stricte */
+        /* 1. Demande du chemin en boucle jusqu'à validation stricte */
+        while (!fichierValide) {
+            System.out.print("Entrez le chemin de l'image PGM : ");
+            path = scanner.nextLine();
+            File pgmFile = new File(path);
 
-        /* Vérification et lecture de l'en-tête PGM */
-        try {
-            Scanner fileScanner = new Scanner(new File(path));
-            // Lire l'en-tête
-            String type = fileScanner.nextLine();
-            // Ignorer les commentaires
-            String ligne = fileScanner.nextLine();
-            while (ligne.startsWith("#")) {
-                ligne = fileScanner.nextLine();
+            // Vérifier si c'est un fichier existant
+            if (!pgmFile.exists() || !pgmFile.isFile()) {
+                System.out.println("Erreur : Fichier introuvable. Veuillez réessayer.");
+                continue;
             }
-        }catch (FileNotFoundException e) {
-                System.out.println("Fichier introuvable : " + path);
+
+            // Vérifier si le fichier est physiquement vide
+            if (pgmFile.length() == 0) {
+                System.out.println("Erreur : Le fichier est physiquement vide (0 octet).");
+                continue;
+            }
+
+            // Vérification binaire de l'en-tête (Magic Number P2 ou P5)
+            try (java.io.FileInputStream fis = new java.io.FileInputStream(pgmFile)) {
+                int byte1 = fis.read();
+                int byte2 = fis.read();
+
+                // On vérifie que les deux premiers octets forment "P2" (ASCII) ou "P5" (Binaire)
+                if (byte1 == 'P' && (byte2 == '2' || byte2 == '5')) {
+                    fichierValide = true;
+                } else {
+                    System.out.println("Erreur : Le fichier n'est pas un PGM valide (doit commencer par P2 ou P5).");
+                }
+            } catch (java.io.IOException e) {
+                System.out.println("Erreur système : Impossible de lire les octets du fichier.");
+            }
         }
 
-        /* Chargement de l'image */
+        /* 2. Chargement de l'image (exécution sécurisée) */
         Image image = new Image("image_test");
-        image.chargerImagePGM(path); /* lecture et travail sur un fichier pgm*/
+        image.chargerImagePGM(path);
 
-        /* recuperation du seuil de tolerence */
-        System.out.print("Seuil de tolerence compris entre 0 et 100");
-        /*gestion erreur de saisie*/
-        while (!scanner.hasNextInt()) {
-            System.out.println("Erreur : veuillez entrer un entier compris entre 0 et 100.");
-            scanner.next(); /*vider le buffer*/
-        }
-        while((scanner.nextInt() < 0) || (scanner.nextInt() > 100)){
-            System.out.println("Erreur : veuillez entrer un entier compris entre 0 et 100.");
-            scanner.next(); /*vider le buffer*/
-        }
-        int seuilT = scanner.nextInt();
+        /* 3. Récupération du seuil de tolérance (logique corrigée) */
+        int seuilT = -1;
+        System.out.print("Seuil de tolérance compris entre 0 et 100 : ");
 
-        /* recuperation du repertoir de travail */
+        while (true) {
+            if (!scanner.hasNextInt()) {
+                System.out.println("Erreur : vous devez entrer un entier.");
+                scanner.next(); /* Vider l'entrée invalide du buffer */
+            } else {
+                seuilT = scanner.nextInt();
+                if (seuilT >= 0 && seuilT <= 100) {
+                    break; /* Saisie correcte, on sort de la boucle */
+                } else {
+                    System.out.println("Erreur : veuillez entrer un entier compris entre 0 et 100.");
+                }
+            }
+        }
+        scanner.nextLine(); /* Vider le retour chariot restant après nextInt() */
+
+        /* 4. Récupération du répertoire de travail */
         File dossier = new File(System.getProperty("user.dir") + "/archive/");
         File[] fichiers = dossier.listFiles();
 
-        /* verification de l'existance du dossier */
+        /* Vérification de l'existence du dossier */
         if (fichiers == null) {
-            System.out.println("Dossier archive introuvable");
+            System.out.println("Erreur critique : Dossier '/archive/' introuvable.");
+            scanner.close();
             return;
         }
 
-        /* Parcourir et charger chaque personne */
-        Personne[] tabPersonne = new Personne[fichiers.length];
+        /* 5. Parcourir et charger chaque personne (Allocation mémoire optimisée) */
+        // Compter les dossiers réels pour allouer la bonne taille au tableau
+        int nbDossiers = 0;
+        for (File f : fichiers) {
+            if (f.isDirectory()) nbDossiers++;
+        }
+
+        Personne[] tabPersonne = new Personne[nbDossiers];
         int indice = 0;
 
-        for (int i = 0; i < fichiers.length; i++) {
-            if (fichiers[i].isDirectory()) {
-                System.out.println("Chargement des image de " + fichiers[i].getName());
-                tabPersonne[indice] = new Personne(fichiers[i].getName());
+        for (File f : fichiers) {
+            if (f.isDirectory()) {
+                System.out.println("Chargement des images de " + f.getName());
+                tabPersonne[indice] = new Personne(f.getName());
                 tabPersonne[indice].getAllImagePersonne();
                 indice++;
             }
         }
+
         scanner.close();
     }
 }

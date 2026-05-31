@@ -232,7 +232,7 @@ public class Image {
                 } else {
                     x = largeurImage - 1 - j;
                 }
-                int valeur = vecteur.getComposantesAvecIndex(indice);
+                int valeur = (int) vecteur.getComposantesAvecIndex(indice);
                 image.image[i][x] = new PixelGris(x, i, valeur);
                 indice++;
             }
