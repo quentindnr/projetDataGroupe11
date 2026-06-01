@@ -1,6 +1,5 @@
 import java.util.Arrays;
 
-import org.ejml.data.Matrix;
 import org.ejml.simple.SimpleEVD;
 import org.ejml.simple.SimpleMatrix;
 

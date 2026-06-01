@@ -2,7 +2,6 @@ import java.io.*;
 import java.util.Scanner;
 
 import static java.lang.Math.max;
-import static java.lang.Math.toIntExact;
 
 /**
  * Classe qui represente une image en nuances de gris
