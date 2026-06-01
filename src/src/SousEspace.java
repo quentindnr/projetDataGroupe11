@@ -22,16 +22,26 @@ public class SousEspace {
     }
 
     /**
+     * Les eigenfaces du sous-ensemble
+     * 
+     * @return Les eigenfaces du sous-ensemble
+     */
+    public Eigenface[] getEigenfaces() {
+        return eigenfaces;
+    }
+
+    /**
      * Calcule les eigenfaces
      */
     public void calculerEigenface() {
-        // TODO
-        // calc vecteur moyen
         // centrer la matrice
+        Matrice matriceCentree = matrice.getMatriceCentree();
+
         // calculer les valeurs propres
-        // prendre les n plus grandes (methode du coude)
-        // pour chacune, calculer les vecteurs propres
-        // construire la liste les eigenfaces et mettre dans eigenfaces
+        Matrice matriceCovariance = matriceCentree.getMatriceCovariance();
+        EVDCache valeursPropres = matriceCovariance.calculerValeursPropres();
+
+        eigenfaces = valeursPropres.getComposantes();
     }
 
     /**
@@ -39,14 +49,16 @@ public class SousEspace {
      * 
      * @param image L'image a projeter
      */
-    public void projeter(Image image) {
+    public Vecteur projeter(Image image) {
         // TODO
+        return new Vecteur(null, 0);
     }
 
     /**
      * Reconstruit une image a partir de la projection
      */
-    public void reconstruire(Image projection) {
+    public Image reconstruire(Vecteur projection) {
         // TODO
+        return new Image(null);
     }
 }

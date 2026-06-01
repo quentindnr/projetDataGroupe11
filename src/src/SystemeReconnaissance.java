@@ -7,8 +7,8 @@ public class SystemeReconnaissance {
      */
     private SousEspace sousEspace;
     /**
-     * Le seuil de reconnaissance a partir duquel on considere une personne inconnue
-     * Il correspond a la distance max entre 2 images lors de la reconnaissance
+     * Le seuil de reconnaissance a partir duquel on considere une personne inconnue. Il correspond a la distance max entre
+     * 2 images lors de la reconnaissance
      */
     private float seuilReconnaissance;
     /**
@@ -19,12 +19,9 @@ public class SystemeReconnaissance {
     /**
      * Une classe qui represente le systeme de reconnaissance faciale
      * 
-     * @param seuilReconnaissance Le seuil de reconnaissance a partir duquel on
-     *                            considere une personne inconnue
-     *                            Il correspond a la distance max entre 2 images
-     *                            lors de la reconnaissances
-     * @param personnes           Les personnes qui forment notre base de
-     *                            reconnaissance
+     * @param seuilReconnaissance Le seuil de reconnaissance a partir duquel on considere une personne inconnue. Il
+     *                            correspond a la distance max entre 2 images lors de la reconnaissances
+     * @param personnes           Les personnes qui forment notre base de reconnaissance
      */
     public SystemeReconnaissance(float seuilReconnaissance, Personne[] personnes) {
         this.sousEspace = null;
@@ -64,13 +61,27 @@ public class SystemeReconnaissance {
      * Lance le processus d'identification sur une image
      * 
      * @param imageTest L'image cible qu'on cherche a identifier
-     * @return Une instance de ResultatIdentification qui contient les resultat de
-     *         l'identification
+     * @return Une instance de ResultatIdentification qui contient les resultat de l'identification
      */
     public ResultatIdentification identifier(Image imageTest) {
-        // TODO
-        // avant tout, faut check si sousEspace est non null (ie le model est entraine)
-        return null;
+        if (sousEspace == null) {
+            throw new IllegalStateException("Le systeme doit etre entrainer avec de pouvoir faire une identification");
+        }
+
+        Vecteur projection = sousEspace.projeter(imageTest);
+
+        double min = seuilReconnaissance;
+        Eigenface eigenfaceMin = null;
+
+        for (Eigenface eigenface : sousEspace.getEigenfaces()) {
+            double distance = eigenface.getVecteur().distance(projection);
+            if (distance < min) {
+                min = distance;
+                eigenfaceMin = eigenface;
+            }
+        }
+
+        return new ResultatIdentification(null, min, min < seuilReconnaissance);
     }
 
 }
