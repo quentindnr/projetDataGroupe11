@@ -1,10 +1,10 @@
 public class Eigenface{
 
-    private float valeurPropre;
+    private double valeurPropre;
     private int rang;
     private Vecteur vecteur;
 
-    public Eigenface(float valeurPropre, int rang){
+    public Eigenface(double valeurPropre, int rang){
         this.valeurPropre = valeurPropre;
         this.rang = rang;
     }
@@ -13,7 +13,7 @@ public class Eigenface{
         this.vecteur = vecteur;
     }
 
-    public float getValeurPropre(){
+    public double getValeurPropre(){
         return valeurPropre;
     }
 
