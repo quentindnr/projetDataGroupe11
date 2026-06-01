@@ -282,6 +282,7 @@ public class Image {
                     }
                 }
 
+                scanner.close();
             } else {
                 throw new IOException("Format non supporté");
             }
