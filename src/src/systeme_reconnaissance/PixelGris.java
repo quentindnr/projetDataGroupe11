@@ -1,3 +1,5 @@
+package systeme_reconnaissance;
+
 public class PixelGris extends Pixel{
 
     private int nuanceGris;

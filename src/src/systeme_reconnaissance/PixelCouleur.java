@@ -1,3 +1,5 @@
+package systeme_reconnaissance;
+
 public class PixelCouleur extends Pixel{
 
     private int rouge;

@@ -1,3 +1,5 @@
+package systeme_reconnaissance;
+
 /**
  * Une classe qui represente le systeme de reconnaissance faciale
  */

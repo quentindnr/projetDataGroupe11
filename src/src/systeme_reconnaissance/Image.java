@@ -1,3 +1,5 @@
+package systeme_reconnaissance;
+
 import java.io.*;
 import java.util.Scanner;
 

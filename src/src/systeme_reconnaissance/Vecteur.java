@@ -1,3 +1,5 @@
+package systeme_reconnaissance;
+
 /**
  * Représente un vecteur de dimension fixe.
  * 

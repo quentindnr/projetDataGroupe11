@@ -1,3 +1,5 @@
+package systeme_reconnaissance;
+
 public abstract class Pixel {
         private int x;
         private int y;
