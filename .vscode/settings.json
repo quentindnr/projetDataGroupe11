@@ -1,0 +1,13 @@
+{
+    "editor.indentSize": "tabSize",
+    "editor.tabSize": 4,
+    "java.format.settings.url": ".vscode/java-formatter.xml",
+    "[java]": {
+        "editor.formatOnSave": true
+    },
+    "java.inlayHints.parameterNames.enabled": "none",
+    "java.codeGeneration.insertionLocation": "lastMember",
+    "java.codeGeneration.addFinalForNewDeclaration": "all",
+    "java.codeGeneration.generateComments": true,
+    "java.codeGeneration.toString.codeStyle": "STRING_FORMAT"
+}
