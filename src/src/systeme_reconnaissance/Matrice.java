@@ -3,14 +3,12 @@ package systeme_reconnaissance;
 import org.ejml.simple.SimpleMatrix;
 
 /**
- * Une classe qui represente la matrice de vecteurs sous forme d'une
- * SimpleMatrix
+ * Une classe qui represente la matrice de vecteurs sous forme d'une SimpleMatrix
  */
 public class Matrice extends SimpleMatrix {
 
     /**
-     * Une classe qui represente la matrice de vecteurs sous forme d'une
-     * SimpleMatrix
+     * Une classe qui represente la matrice de vecteurs sous forme d'une SimpleMatrix
      * 
      * @param vecteurs Les vecteurs qui forment la matrice
      */
@@ -23,7 +21,7 @@ public class Matrice extends SimpleMatrix {
             }
         }
     }
-    
+
     /**
      * Cree une matrice vide
      * 
@@ -34,7 +32,6 @@ public class Matrice extends SimpleMatrix {
         super(numRows, numCols);
     }
 
-    
     /**
      * Cree une copie d'une SimpleMatrix sous la forme d'une Matrice
      * 
@@ -73,8 +70,8 @@ public class Matrice extends SimpleMatrix {
      */
     public Matrice getMatriceCentree() {
         Matrice matriceCentree = new Matrice(getNumRows(), getNumCols());
-        Vecteur vecteurMoyen = getVecteurMoyen();        
-        
+        Vecteur vecteurMoyen = getVecteurMoyen();
+
         SimpleMatrix ligneMoyenne = new SimpleMatrix(getNumRows(), 1);
         for (int j = 0; j < getNumRows(); j++) {
             ligneMoyenne.set(j, 0, vecteurMoyen.getComposantesAvecIndex(j));
@@ -105,7 +102,6 @@ public class Matrice extends SimpleMatrix {
      * @return La decomposition EVD de cette matrice
      */
     public EVDCache calculerValeursPropres() {
-        // FIXME ne pas calculer tout les vecteurs propres
         return new EVDCache(eig());
     }
 

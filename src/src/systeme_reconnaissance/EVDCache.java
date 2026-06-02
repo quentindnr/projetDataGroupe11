@@ -17,7 +17,7 @@ public class EVDCache {
     /**
      * La somme de toutes les valeurs propres, utilisee pour le calcul des variances
      */
-    private double sommeValeursPropres; 
+    private double sommeValeursPropres;
 
     /**
      * Valeurs propres triees par ordre decroissant
@@ -31,13 +31,13 @@ public class EVDCache {
      */
     public EVDCache(SimpleEVD<SimpleMatrix> evd) {
         evdCache = evd;
-        
+
         int numEigenvalues = evdCache.getNumberOfEigenvalues();
-        
+
         sommeValeursPropres = 0;
         valeursPropresTriees = new Eigenface[numEigenvalues];
 
-        for(int i = 0; i < numEigenvalues; i++) {
+        for (int i = 0; i < numEigenvalues; i++) {
             double valeur = evdCache.getEigenvalue(i).real;
             valeursPropresTriees[i] = new Eigenface(valeur, i);
             sommeValeursPropres += valeur;
@@ -67,15 +67,14 @@ public class EVDCache {
 
         double[] composantes = new double[eigenVector.getNumRows()];
         for (int i = 0; i < composantes.length; i++) {
-            composantes[i] = eigenVector.get(i, 0);            
+            composantes[i] = eigenVector.get(i, 0);
         }
 
         return new Vecteur(composantes, composantes.length);
     }
 
     /**
-     * Calcule la variance expliquee a l'indice k
-     * Les valeurs propres sont triees par ordre decroissant
+     * Calcule la variance expliquee a l'indice k Les valeurs propres sont triees par ordre decroissant
      *
      * @param k L'indice k de la valeur propre
      * @return La variance expliquee a l'indice k entre 0 et 1
@@ -85,16 +84,15 @@ public class EVDCache {
     }
 
     /**
-     * Calcule la variance expliquee cumulee jusqu'a l'indice k
-     * Les valeurs propres sont triees par ordre decroissant
+     * Calcule la variance expliquee cumulee jusqu'a l'indice k Les valeurs propres sont triees par ordre decroissant
      *
      * @param k L'indice k jusqu'auquel sommer les variances
      * @return La variance expliquee cumulee entre 0 et 1
      */
     public double calculerVarianceExpliqueCumule(int k) {
-        double sommeV = 0; 
+        double sommeV = 0;
 
-        for (int i = 0; i < k; i++){
+        for (int i = 0; i < k; i++) {
             sommeV += valeursPropresTriees[i].getValeurPropre();
         }
 
@@ -106,9 +104,15 @@ public class EVDCache {
      * 
      * @return Le nombre de composantes pricipales
      */
-    public int calculerNbrComposantes() {
-        // TODO methode du coude?
-        return 50;
+    public int calculerNbrComposantes(double seuil) {
+        int n = 0;
+        for (int i = 0; i < valeursPropresTriees.length; i++) {
+            if (calculerVarianceExpliqueCumule(i) >= seuil) {
+                n = i + 1;
+                break;
+            }
+        }
+        return n;
     }
 
     /**
@@ -116,8 +120,8 @@ public class EVDCache {
      * 
      * @return Les composantes pricipales
      */
-    public Eigenface[] getComposantes() {
-        Eigenface[] composantes = Arrays.copyOfRange(valeursPropresTriees, 0, calculerNbrComposantes() - 1);
+    public Eigenface[] getComposantes(double seuil) {
+        Eigenface[] composantes = Arrays.copyOfRange(valeursPropresTriees, 0, calculerNbrComposantes(seuil) - 1);
 
         for (Eigenface composante : composantes) {
             composante.ajoutVecteur(getVecteurPropre(composante.getRang()));
