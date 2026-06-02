@@ -5,6 +5,8 @@ import java.util.Scanner;
 
 import systeme_reconnaissance.Image;
 import systeme_reconnaissance.Personne;
+import systeme_reconnaissance.ResultatIdentification;
+import systeme_reconnaissance.SystemeReconnaissance;
 
 public class IhmConsole {
     public static void main(String[] args) {
@@ -71,12 +73,12 @@ public class IhmConsole {
         scanner.nextLine(); /* Vider le retour chariot restant après nextInt() */
 
         /* 4. Récupération du répertoire de travail */
-        File dossier = new File(System.getProperty("user.dir") + "/archive/");
+        File dossier = new File(System.getProperty("user.dir") + "/archive/train/");
         File[] fichiers = dossier.listFiles();
 
         /* Vérification de l'existence du dossier */
         if (fichiers == null) {
-            System.out.println("Erreur critique : Dossier '/archive/' introuvable.");
+            System.out.println("Erreur critique : Dossier '/archive/train/' introuvable.");
             scanner.close();
             return;
         }
@@ -85,7 +87,8 @@ public class IhmConsole {
         // Compter les dossiers réels pour allouer la bonne taille au tableau
         int nbDossiers = 0;
         for (File f : fichiers) {
-            if (f.isDirectory()) nbDossiers++;
+            if (f.isDirectory())
+                nbDossiers++;
         }
 
         Personne[] tabPersonne = new Personne[nbDossiers];
@@ -101,5 +104,16 @@ public class IhmConsole {
         }
 
         scanner.close();
+
+        SystemeReconnaissance systeme = new SystemeReconnaissance(seuilT, tabPersonne);
+
+        System.out.println("Entrainement du systeme");
+        systeme.entrainer();
+
+        System.out.println("Identification de l'image");
+        ResultatIdentification resultat = systeme.identifier(image);
+
+        System.out.println("Resultats:");
+        System.out.println(resultat.toString());
     }
 }
