@@ -11,7 +11,6 @@ package systeme_reconnaissance;
 public class Vecteur {
     private double[] composantes;
     private int dimension;
-    private int norme;
 
     /**
      * Crée un vecteur à partir de ses composantes et de sa dimension.
@@ -146,8 +145,7 @@ public class Vecteur {
         for (int i = 0; i < this.dimension; i++) {
             sum += this.composantes[i] * this.composantes[i];
         }
-        this.norme = (int) Math.sqrt(sum);
-        return norme;
+        return (int) Math.sqrt(sum);
     }
 
     /**
