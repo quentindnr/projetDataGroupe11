@@ -22,13 +22,30 @@ public class SystemeReconnaissance {
      * Les personnes qui forment notre base de reconnaissance
      */
     private Personne[] personnes;
+
+    /** Projections des images d'apprentissage conservees pour l'identification. */
     private Gabarit[] gabarits;
 
+    /**
+     * Associe une image d'apprentissage, sa personne et sa projection dans le sous-espace.
+     */
     private static class Gabarit {
+        /** Personne a laquelle appartient l'image d'apprentissage. */
         private final Personne personne;
+
+        /** Image d'apprentissage utilisee pour creer ce gabarit. */
         private final Image image;
+
+        /** Coordonnees de l'image dans le sous-espace des eigenfaces. */
         private final Vecteur projection;
 
+        /**
+         * Cree un gabarit de reconnaissance.
+         *
+         * @param personne   la personne associee a l'image
+         * @param image      l'image d'apprentissage
+         * @param projection la projection de l'image dans le sous-espace
+         */
         private Gabarit(Personne personne, Image image, Vecteur projection) {
             this.personne = personne;
             this.image = image;
@@ -123,14 +140,33 @@ public class SystemeReconnaissance {
         return new ResultatIdentification(estReconnu ? gabaritMin.personne : null, min, estReconnu);
     }
 
+    /**
+     * Retourne le sous-espace calcule pendant l'entrainement.
+     *
+     * @return le sous-espace de projection, ou null si le systeme n'est pas encore entraine
+     */
     public SousEspace getSousEspace() {
         return sousEspace;
     }
 
+    /**
+     * Retourne le nombre de gabarits disponibles dans la base de reconnaissance.
+     *
+     * @return le nombre d'images d'apprentissage projetees
+     */
     public int getNombreGabarits() {
         return gabarits.length;
     }
 
+    /**
+     * Charge toutes les personnes presentes dans un dossier racine.
+     *
+     * Chaque sous-dossier est considere comme une personne et les fichiers PGM qu'il contient
+     * sont charges comme images d'apprentissage.
+     *
+     * @param cheminDossierRacine le chemin du dossier contenant les sous-dossiers de personnes
+     * @return le tableau des personnes chargees
+     */
     public static Personne[] chargerPersonnesDepuisDossier(String cheminDossierRacine) {
         File dossierRacine = new File(cheminDossierRacine);
         File[] dossiers = dossierRacine.listFiles(File::isDirectory);

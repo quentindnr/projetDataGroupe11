@@ -10,7 +10,10 @@ import org.ejml.simple.SimpleMatrix;
  * 
  */
 public class Vecteur {
+    /** Valeurs numeriques du vecteur. */
     private double[] composantes;
+
+    /** Nombre de composantes du vecteur. */
     private int dimension;
 
     /**
@@ -28,7 +31,6 @@ public class Vecteur {
      * Crée un vecteur à partir d'un vecteur colonne sous forme de matrice
      *
      * @param vecteurColonne Vecteur colonne sous forme de matrice
-     * @param dimension      la dimension du vecteur
      */
     public Vecteur(SimpleMatrix vecteurColonne) {
         composantes = new double[vecteurColonne.getNumRows()];
