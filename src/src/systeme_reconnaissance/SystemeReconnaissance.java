@@ -83,7 +83,9 @@ public class SystemeReconnaissance {
             }
         }
 
-        return new ResultatIdentification(null, min, min < seuilReconnaissance);
+        Personne personne = personnes[eigenfaceMin.getRang()];
+
+        return new ResultatIdentification(personne, min, min < seuilReconnaissance);
     }
 
 }
