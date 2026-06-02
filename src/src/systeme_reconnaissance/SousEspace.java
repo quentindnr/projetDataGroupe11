@@ -1,5 +1,7 @@
 package systeme_reconnaissance;
 
+import org.ejml.simple.SimpleMatrix;
+
 /**
  * Une classe qui represente le sous-ensemble de projection
  */
@@ -44,6 +46,13 @@ public class SousEspace {
         EVDCache valeursPropres = matriceCovariance.calculerValeursPropres();
 
         eigenfaces = valeursPropres.getComposantes(seuil);
+
+        // retour a la matrice originale
+        for (Eigenface eigenface : eigenfaces) {
+            SimpleMatrix vecteur = eigenface.getVecteur().toSimpleMatrix();
+            vecteur = vecteur.mult(matriceCentree);
+            eigenface.ajoutVecteur(new Vecteur(vecteur));
+        }
     }
 
     /**
