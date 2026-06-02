@@ -1,11 +1,12 @@
 package systeme_reconnaissance;
 
+import org.ejml.simple.SimpleMatrix;
+
 /**
  * Représente un vecteur de dimension fixe.
  * 
- * Ce vecteur encapsule un tableau de composantes et fournit des opérations
- * de base telles que l'ajout, la soustraction, la multiplication composante à composante,
- * le calcul du produit scalaire et de la distance.
+ * Ce vecteur encapsule un tableau de composantes et fournit des opérations de base telles que l'ajout, la soustraction,
+ * la multiplication composante à composante, le calcul du produit scalaire et de la distance.
  * 
  */
 public class Vecteur {
@@ -21,6 +22,20 @@ public class Vecteur {
     public Vecteur(double[] composantes, int dimension) {
         this.composantes = composantes;
         this.dimension = dimension;
+    }
+
+    /**
+     * Crée un vecteur à partir d'un vecteur colonne sous forme de matrice
+     *
+     * @param vecteurColonne Vecteur colonne sous forme de matrice
+     * @param dimension      la dimension du vecteur
+     */
+    public Vecteur(SimpleMatrix vecteurColonne) {
+        composantes = new double[vecteurColonne.getNumRows()];
+        for (int i = 0; i < composantes.length; i++) {
+            composantes[i] = vecteurColonne.get(i, 0);
+        }
+        this.dimension = composantes.length;
     }
 
     /**
@@ -181,4 +196,12 @@ public class Vecteur {
         return stringBuilder.toString();
     }
 
+    /**
+     * Transforme le Vecteur en SimpleMatrix
+     * 
+     * @return La SimpleMatrix
+     */
+    public SimpleMatrix toSimpleMatrix() {
+        return new SimpleMatrix(composantes);
+    }
 }

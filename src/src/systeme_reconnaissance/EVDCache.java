@@ -44,7 +44,6 @@ public class EVDCache {
         }
 
         Arrays.sort(valeursPropresTriees, (Eigenface a, Eigenface b) -> Double.compare(b.getValeurPropre(), a.getValeurPropre()));
-
     }
 
     /**
@@ -65,12 +64,7 @@ public class EVDCache {
     public Vecteur getVecteurPropre(int rang) {
         SimpleMatrix eigenVector = evdCache.getEigenVector(rang);
 
-        double[] composantes = new double[eigenVector.getNumRows()];
-        for (int i = 0; i < composantes.length; i++) {
-            composantes[i] = eigenVector.get(i, 0);
-        }
-
-        return new Vecteur(composantes, composantes.length);
+        return new Vecteur(eigenVector);
     }
 
     /**
