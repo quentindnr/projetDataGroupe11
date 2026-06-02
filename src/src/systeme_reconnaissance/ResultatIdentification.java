@@ -12,9 +12,9 @@ public class ResultatIdentification {
 
     // --- Constructeur ---
     /**
-     * Crée un nouveau résultat d'identification.
-     * * @param personne La personne identifiée (peut être null si non reconnu).
-     * @param distance La distance euclidienne calculée par l'algorithme ACP.
+     * Crée un nouveau résultat d'identification. * @param personne La personne identifiée (peut être null si non reconnu).
+     * 
+     * @param distance   La distance euclidienne calculée par l'algorithme ACP.
      * @param estReconnu true si la distance est inférieure au seuil de tolérance, false sinon.
      */
     public ResultatIdentification(Personne personne, double distance, boolean estReconnu) {
@@ -27,6 +27,7 @@ public class ResultatIdentification {
 
     /**
      * Indique si le visage a été reconnu.
+     * 
      * @return true si reconnu, false sinon.
      */
     public boolean estReconnu() {
@@ -35,6 +36,7 @@ public class ResultatIdentification {
 
     /**
      * Récupère la personne identifiée.
+     * 
      * @return L'objet Personne correspondant, ou null si le visage est inconnu.
      */
     public Personne getPersonne() {
@@ -43,9 +45,19 @@ public class ResultatIdentification {
 
     /**
      * Récupère la distance calculée par le système.
+     * 
      * @return La distance en format double.
      */
     public double getDistance() {
         return this.distance;
+    }
+
+    @Override
+    public String toString() {
+        if (estReconnu) {
+            return "Visage reconnu : " + personne.getNom() + " (Distance: " + distance + ")";
+        } else {
+            return "Visage inconnu (Distance: " + distance + ")";
+        }
     }
 }
