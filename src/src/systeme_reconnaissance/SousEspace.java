@@ -35,7 +35,7 @@ public class SousEspace {
     /**
      * Calcule les eigenfaces
      */
-    public void calculerEigenface() {
+    public void calculerEigenface(double seuil) {
         // centrer la matrice
         Matrice matriceCentree = matrice.getMatriceCentree();
 
@@ -43,7 +43,7 @@ public class SousEspace {
         Matrice matriceCovariance = matriceCentree.getMatriceCovariance();
         EVDCache valeursPropres = matriceCovariance.calculerValeursPropres();
 
-        eigenfaces = valeursPropres.getComposantes();
+        eigenfaces = valeursPropres.getComposantes(seuil);
     }
 
     /**

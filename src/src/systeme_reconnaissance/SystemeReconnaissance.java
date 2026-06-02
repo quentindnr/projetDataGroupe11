@@ -12,7 +12,7 @@ public class SystemeReconnaissance {
      * Le seuil de reconnaissance a partir duquel on considere une personne inconnue. Il correspond a la distance max entre
      * 2 images lors de la reconnaissance
      */
-    private float seuilReconnaissance;
+    private double seuilReconnaissance;
     /**
      * Les personnes qui forment notre base de reconnaissance
      */
@@ -25,7 +25,7 @@ public class SystemeReconnaissance {
      *                            correspond a la distance max entre 2 images lors de la reconnaissances
      * @param personnes           Les personnes qui forment notre base de reconnaissance
      */
-    public SystemeReconnaissance(float seuilReconnaissance, Personne[] personnes) {
+    public SystemeReconnaissance(double seuilReconnaissance, Personne[] personnes) {
         this.sousEspace = null;
         this.seuilReconnaissance = seuilReconnaissance;
         this.personnes = personnes;
@@ -36,7 +36,7 @@ public class SystemeReconnaissance {
      * 
      * @param seuilReconnaissance La nouvelle valeur
      */
-    public void setSeuilReconnaissance(float seuilReconnaissance) {
+    public void setSeuilReconnaissance(double seuilReconnaissance) {
         this.seuilReconnaissance = seuilReconnaissance;
     }
 
@@ -56,7 +56,7 @@ public class SystemeReconnaissance {
         }
 
         sousEspace = new SousEspace(vecteurs);
-        sousEspace.calculerEigenface();
+        sousEspace.calculerEigenface(seuilReconnaissance);
     }
 
     /**
@@ -83,7 +83,9 @@ public class SystemeReconnaissance {
             }
         }
 
-        return new ResultatIdentification(null, min, min < seuilReconnaissance);
+        Personne personne = personnes[eigenfaceMin.getRang()];
+
+        return new ResultatIdentification(personne, min, min < seuilReconnaissance);
     }
 
 }
