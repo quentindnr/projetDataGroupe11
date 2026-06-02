@@ -10,14 +10,23 @@ import org.ejml.simple.SimpleMatrix;
  * Une classe qui represente le sous-ensemble de projection
  */
 public class SousEspace {
+    /** Ratio de variance expliquee conserve par defaut lors du calcul des eigenfaces. */
     private static final double VARIANCE_EXPLIQUEE_MIN = 0.95;
+
+    /** Tolerance numerique utilisee pour ignorer les valeurs propres nulles ou complexes. */
     private static final double EPSILON = 1e-9;
+
     /**
      * La matrice du sous-ensemble
      */
     private Matrice matrice;
+
+    /** Vecteur moyen calcule a partir des images d'apprentissage. */
     private Vecteur visageMoyen;
+
+    /** Matrice d'apprentissage centree autour du visage moyen. */
     private Matrice matriceCentree;
+
     /**
      * Les eigenfaces du sous-ensemble
      */
@@ -42,6 +51,11 @@ public class SousEspace {
         return eigenfaces;
     }
 
+    /**
+     * Retourne le visage moyen utilise pour centrer les images avant projection.
+     *
+     * @return le vecteur moyen des images d'apprentissage
+     */
     public Vecteur getVisageMoyen() {
         return visageMoyen;
     }
@@ -120,9 +134,13 @@ public class SousEspace {
     }
 
     /**
-     * Projete l'image sur ce sous-ensemble
-     * 
+     * Projete une image dans le sous-espace des eigenfaces.
+     *
+     * L'image est d'abord vectorisee et centree par soustraction du visage moyen,
+     * puis chaque coordonnee est obtenue par produit scalaire avec une eigenface.
+     *
      * @param image L'image a projeter
+     * @return le gabarit de l'image dans le sous-espace
      */
     public Vecteur projeter(Image image) {
         if (eigenfaces == null || visageMoyen == null) {
@@ -141,7 +159,10 @@ public class SousEspace {
     }
 
     /**
-     * Reconstruit une image a partir de la projection
+     * Reconstruit une approximation d'image a partir de ses coordonnees projetees.
+     *
+     * @param projection le vecteur de coordonnees dans le sous-espace
+     * @return l'image reconstruite a partir du visage moyen et des eigenfaces
      */
     public Image reconstruire(Vecteur projection) {
         if (eigenfaces == null || visageMoyen == null) {
@@ -163,6 +184,12 @@ public class SousEspace {
         return Image.fromVecteur(new Vecteur(composantes, composantes.length), "reconstruction");
     }
 
+    /**
+     * Convertit une matrice colonne EJML en instance de Vecteur.
+     *
+     * @param matriceColonne la matrice colonne a convertir
+     * @return le vecteur contenant les valeurs de la matrice colonne
+     */
     private Vecteur toVecteur(SimpleMatrix matriceColonne) {
         double[] composantes = new double[matriceColonne.getNumRows()];
         for (int i = 0; i < composantes.length; i++) {

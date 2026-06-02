@@ -76,6 +76,14 @@ public class Personne {
         chargerImagesDepuisDossier(new File("archive/train/" + nom));
     }
 
+    /**
+     * Charge toutes les images PGM contenues dans un dossier donne.
+     *
+     * Les fichiers sont tries par nom pour garder un ordre de chargement stable.
+     * Seuls les fichiers portant l'extension ".pgm" sont pris en compte.
+     *
+     * @param dossier le dossier contenant les images de la personne
+     */
     public void chargerImagesDepuisDossier(File dossier) {
         File[] fichiers = dossier.listFiles();
 
