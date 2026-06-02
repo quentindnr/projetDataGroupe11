@@ -54,25 +54,6 @@ public class IhmConsole {
         Image image = new Image("image_test");
         image.chargerImagePGM(path);
 
-        /* 3. Récupération du seuil de tolérance */
-        float seuilT = -1;
-        System.out.print("Seuil de tolérance compris entre 0 et 1 : ");
-
-        while (true) {
-            if (!scanner.hasNextFloat()) {
-                System.out.println("Erreur : vous devez entrer un nombre à virgule (exemple 0.90).");
-                scanner.next();
-            } else {
-                seuilT = scanner.nextFloat();
-                if (seuilT >= 0 && seuilT <= 1) {
-                    break;
-                } else {
-                    System.out.println("Erreur : veuillez entrer un nombre à virgule compris entre 0 et 1.");
-                }
-            }
-        }
-        scanner.nextLine(); /* Vider le retour chariot restant après nextFloat() */
-
         /* 4. Récupération du répertoire de travail */
         File dossier = new File(System.getProperty("user.dir") + "/archive/train/");
         File[] fichiers = dossier.listFiles(File::isDirectory);
@@ -98,7 +79,7 @@ public class IhmConsole {
 
         scanner.close();
 
-        SystemeReconnaissance systeme = new SystemeReconnaissance(seuilT, tabPersonne);
+        SystemeReconnaissance systeme = new SystemeReconnaissance(0.95, tabPersonne);
 
         System.out.println("Entrainement du systeme");
         systeme.entrainer();

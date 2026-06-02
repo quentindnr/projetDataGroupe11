@@ -55,7 +55,7 @@ public class SystemeReconnaissance {
 
     /**
      * Une classe qui represente le systeme de reconnaissance faciale
-     * 
+     *
      * @param seuilReconnaissance Le seuil de reconnaissance a partir duquel on considere une personne inconnue. Il
      *                            correspond a la distance max entre 2 images lors de la reconnaissances
      * @param personnes           Les personnes qui forment notre base de reconnaissance
@@ -124,6 +124,7 @@ public class SystemeReconnaissance {
         }
 
         Vecteur projection = sousEspace.projeter(imageTest);
+        int seuil = 2500;
 
         double min = Double.POSITIVE_INFINITY;
         Gabarit gabaritMin = null;
@@ -136,7 +137,7 @@ public class SystemeReconnaissance {
             }
         }
 
-        boolean estReconnu = gabaritMin != null && min <= seuilReconnaissance;
+        boolean estReconnu = gabaritMin != null && min <= seuil;
         return new ResultatIdentification(estReconnu ? gabaritMin.personne : null, min, estReconnu);
     }
 
