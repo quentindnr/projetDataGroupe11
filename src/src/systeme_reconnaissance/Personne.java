@@ -1,13 +1,12 @@
 package systeme_reconnaissance;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
- * Represente une personne identifiee par son nom et associee a un ensemble
- * d'images.
+ * Represente une personne identifiee par son nom et associee a un ensemble d'images.
  *
- * Les images d'une personne sont stockees dans un sous-dossier portant son nom,
- * situe dans le dossier "archive".
+ * Les images d'une personne sont stockees dans un sous-dossier portant son nom, situe dans le dossier "archive".
  */
 public class Personne {
 
@@ -50,34 +49,48 @@ public class Personne {
      *
      * @return le tableau des images de la personne
      */
-    public Image[] getImage() {
-        return this.image;
+    public Image[] getImages() {
+        if (image == null) {
+            return new Image[0];
+        }
+        return Arrays.copyOf(image, image.length);
+    }
+
+    /**
+     * Retourne le nombre d'image de la personne.
+     * 
+     * @return le nombre d'image
+     */
+
+    public int getNombreImages() {
+        return image == null ? 0 : image.length;
     }
 
     /**
      * Charge toutes les images de la personne depuis son dossier.
      *
-     * La methode lit le dossier "archive/nom", puis cree et charge une image
-     * pour chaque fichier present dans ce dossier. Si le dossier n'existe pas,
-     * un message d'erreur est affiche et aucune image n'est chargee.
+     * La methode lit le dossier "archive/nom", puis cree et charge une image pour chaque fichier present dans ce dossier.
+     * Si le dossier n'existe pas, un message d'erreur est affiche et aucune image n'est chargee.
      */
     public void getAllImagePersonne() {
-        String path = "archive/" + nom;
-        File dossier = new File(path);
+        chargerImagesDepuisDossier(new File("archive/" + nom));
+    }
+
+    public void chargerImagesDepuisDossier(File dossier) {
         File[] fichiers = dossier.listFiles();
 
-        // Si le dossier n'existe pas, listFiles() renvoie null : on arrete le chargement
         if (fichiers == null) {
-            System.out.println("Dossier introuvable : " + path);
+            System.out.println("Dossier introuvable : " + dossier.getPath());
             return;
         }
 
-        // On cree un tableau de la taille du nombre de fichiers trouves
-        this.image = new Image[fichiers.length];
+        Arrays.sort(fichiers, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+        File[] imagesPgm = Arrays.stream(fichiers).filter(File::isFile).filter(fichier -> fichier.getName().toLowerCase().endsWith(".pgm"))
+                .toArray(File[]::new);
 
-        // Pour chaque fichier, on cree une image et on charge son contenu
-        for (int i = 0; i < fichiers.length; i++) {
-            String pathImage = fichiers[i].getPath();
+        this.image = new Image[imagesPgm.length];
+        for (int i = 0; i < imagesPgm.length; i++) {
+            String pathImage = imagesPgm[i].getPath();
             Image img = new Image(nom + "_" + i);
             img.chargerImagePGM(pathImage);
             this.image[i] = img;

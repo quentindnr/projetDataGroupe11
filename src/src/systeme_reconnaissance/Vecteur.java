@@ -182,6 +182,35 @@ public class Vecteur {
     }
 
     /**
+     * Calcule le produit scalaire entre ce vecteur et un autre vecteur.
+     *
+     * @param v le vecteur de comparaison
+     * @return la somme des produits composante par composante
+     */
+    public double produitScalaireSimple(Vecteur v) {
+        if (this.dimension != v.dimension) {
+            throw new IllegalArgumentException("Les vecteurs doivent avoir la même dimension pour calculer le produit scalaire.");
+        }
+
+        double somme = 0;
+        for (int i = 0; i < this.dimension; i++) {
+            somme += this.composantes[i] * v.composantes[i];
+        }
+        return somme;
+    }
+
+    /**
+     * Cree une copie independante du vecteur.
+     *
+     * @return un nouveau vecteur avec les memes composantes
+     */
+    public Vecteur copier() {
+        double[] copie = new double[this.dimension];
+        System.arraycopy(this.composantes, 0, copie, 0, this.dimension);
+        return new Vecteur(copie, this.dimension);
+    }
+
+    /**
      * Retourne une représentation textuelle du vecteur.
      *
      * @return une chaîne contenant les composantes séparées par des retours à la ligne
