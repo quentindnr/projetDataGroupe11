@@ -73,7 +73,7 @@ public class Personne {
      * Si le dossier n'existe pas, un message d'erreur est affiche et aucune image n'est chargee.
      */
     public void getAllImagePersonne() {
-        chargerImagesDepuisDossier(new File("archive/" + nom));
+        chargerImagesDepuisDossier(new File("archive/train/" + nom));
     }
 
     public void chargerImagesDepuisDossier(File dossier) {

@@ -111,7 +111,7 @@ public class Vecteur {
             throw new IllegalArgumentException("Les vecteurs doivent avoir la même dimension pour être soustraits.");
         }
         for (int i = 0; i < this.dimension; i++) {
-            this.composantes[i] += v.composantes[i];
+            this.composantes[i] -= v.composantes[i];
         }
     }
 

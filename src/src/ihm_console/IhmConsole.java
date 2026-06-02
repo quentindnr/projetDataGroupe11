@@ -1,6 +1,7 @@
 package ihm_console;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import systeme_reconnaissance.Image;
@@ -53,7 +54,7 @@ public class IhmConsole {
         Image image = new Image("image_test");
         image.chargerImagePGM(path);
 
-        /* 3. Récupération du seuil de tolérance (logique corrigée) */
+        /* 3. Récupération du seuil de tolérance */
         float seuilT = -1;
         System.out.print("Seuil de tolérance compris entre 0 et 1 : ");
 
@@ -70,11 +71,11 @@ public class IhmConsole {
                 }
             }
         }
-        scanner.nextLine(); /* Vider le retour chariot restant après nextInt() */
+        scanner.nextLine(); /* Vider le retour chariot restant après nextFloat() */
 
         /* 4. Récupération du répertoire de travail */
         File dossier = new File(System.getProperty("user.dir") + "/archive/train/");
-        File[] fichiers = dossier.listFiles();
+        File[] fichiers = dossier.listFiles(File::isDirectory);
 
         /* Vérification de l'existence du dossier */
         if (fichiers == null) {
@@ -83,24 +84,16 @@ public class IhmConsole {
             return;
         }
 
-        /* 5. Parcourir et charger chaque personne (Allocation mémoire optimisée) */
-        // Compter les dossiers réels pour allouer la bonne taille au tableau
-        int nbDossiers = 0;
-        for (File f : fichiers) {
-            if (f.isDirectory())
-                nbDossiers++;
-        }
-
-        Personne[] tabPersonne = new Personne[nbDossiers];
+        /* 5. Parcourir et charger chaque personne depuis la base d'apprentissage */
+        Arrays.sort(fichiers, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+        Personne[] tabPersonne = new Personne[fichiers.length];
         int indice = 0;
 
         for (File f : fichiers) {
-            if (f.isDirectory()) {
-                System.out.println("Chargement des images de " + f.getName());
-                tabPersonne[indice] = new Personne(f.getName());
-                tabPersonne[indice].getAllImagePersonne();
-                indice++;
-            }
+            System.out.println("Chargement des images de " + f.getName());
+            tabPersonne[indice] = new Personne(f.getName());
+            tabPersonne[indice].chargerImagesDepuisDossier(f);
+            indice++;
         }
 
         scanner.close();
