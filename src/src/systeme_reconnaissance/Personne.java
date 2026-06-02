@@ -19,6 +19,10 @@ public class Personne {
         return image[indice];
     }
 
+    public Image[] getImage(){
+        return this.image;
+    }
+
     public void getAllImagePersonne() {
         String path = "archive/" + nom;
         File dossier = new File(path);
@@ -36,5 +40,13 @@ public class Personne {
             img.chargerImagePGM(pathImage);
             this.image[i] = img;
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder strRetour = new StringBuilder();
+        strRetour.append("Nom : " + this.nom);
+        strRetour.append(", possede : " + this.image.length + " images");
+        return strRetour.toString();
     }
 }

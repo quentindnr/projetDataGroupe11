@@ -58,11 +58,11 @@ public class IhmConsole {
         while (true) {
             if (!scanner.hasNextFloat()) {
                 System.out.println("Erreur : vous devez entrer un nombre à virgule (exemple 0.90).");
-                scanner.next(); /* Vider l'entrée invalide du buffer */
+                scanner.next();
             } else {
                 seuilT = scanner.nextFloat();
                 if (seuilT >= 0 && seuilT <= 1) {
-                    break; /* Saisie correcte, on sort de la boucle */
+                    break;
                 } else {
                     System.out.println("Erreur : veuillez entrer un nombre à virgule compris entre 0 et 1.");
                 }
@@ -96,6 +96,7 @@ public class IhmConsole {
                 System.out.println("Chargement des images de " + f.getName());
                 tabPersonne[indice] = new Personne(f.getName());
                 tabPersonne[indice].getAllImagePersonne();
+                System.out.println(tabPersonne[indice].toString());
                 indice++;
             }
         }
