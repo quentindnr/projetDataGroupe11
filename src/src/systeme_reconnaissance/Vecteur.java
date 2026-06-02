@@ -54,7 +54,7 @@ public class Vecteur {
      * @param i     l'index de la composante
      * @param value la nouvelle valeur de la composante
      */
-    public void setComposantesAvecIndex(int i, int value) {
+    public void setComposantesAvecIndex(int i, double value) {
         composantes[i] = value;
     }
 
@@ -131,23 +131,24 @@ public class Vecteur {
     }
 
     /**
-     * Calcule le produit extérieur de ce vecteur avec un autre vecteur.
+     * Calcule le produit scalaire de ce vecteur avec un autre vecteur.
      *
      * @param v le vecteur avec lequel calculer le produit scalaire
      * @return une matrice de dimension x dimension contenant les produits des composantes
      * @throws IllegalArgumentException si les dimensions sont différentes
      */
-    public double[][] produitScalaire(Vecteur v) {
+    public double produitScalaire(Vecteur v) {
         if (this.dimension != v.dimension) {
-            throw new IllegalArgumentException("Les vecteurs doivent avoir le même nombre de dimension pour être ajoutés.");
+            throw new IllegalArgumentException("Les vecteurs doivent avoir la même dimension.");
         }
-        double[][] result = new double[this.dimension][this.dimension];
+
+        double resultat = 0;
+
         for (int i = 0; i < this.dimension; i++) {
-            for (int j = 0; j < this.dimension; j++) {
-                result[i][j] = this.composantes[i] * v.composantes[j];
-            }
+            resultat += this.composantes[i] * v.composantes[i];
         }
-        return result;
+
+        return resultat;
     }
 
     /**

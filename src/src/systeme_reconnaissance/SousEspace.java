@@ -46,8 +46,16 @@ public class SousEspace {
         return visageMoyen;
     }
 
+    public Vecteur getVisageMoyen() {
+        return visageMoyen;
+    }
+
     /**
-     * Calcule les eigenfaces
+     * Vecteur[] vecteurs = new Vecteur[personnes.length];
+     * 
+     * for (int i = 0; i < personnes.length; i++) { vecteurs[i] = personnes[i].getImageIndice(0).toVecteur(); }
+     * 
+     * sousEspace = new SousEspace(vecteurs); sousEspace.calculerEigenface(seuilReconnaissance); Calcule les eigenfaces
      */
     public void calculerEigenface() {
         calculerEigenface(VARIANCE_EXPLIQUEE_MIN);
