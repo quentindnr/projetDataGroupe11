@@ -33,7 +33,7 @@ public class PixelGris extends Pixel{
      * @param nuanceGris entier qui représente la nouvelle valeur de nuanceGris (comprise entre 0 et 255)
      */
     public void setNuanceGris(int nuanceGris) {
-        if((nuanceGris>=0) && (nuanceGris<=255)){
+        if((nuanceGris>=0) &&    (nuanceGris<=255)){
             this.nuanceGris = nuanceGris;
         }
     }
