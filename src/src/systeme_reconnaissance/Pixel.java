@@ -3,8 +3,7 @@ package systeme_reconnaissance;
 /**
  * Represente un pixel defini par ses coordonnees x et y.
  *
- * Cette classe est abstraite : elle sert de base commune a des types de pixels
- * plus specifiques qui en heritent.
+ * Cette classe est abstraite elle sert de base au classe PixelGris et PixelCouleur
  */
 public abstract class Pixel {
 
