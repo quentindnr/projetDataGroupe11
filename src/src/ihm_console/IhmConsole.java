@@ -52,19 +52,19 @@ public class IhmConsole {
         image.chargerImagePGM(path);
 
         /* 3. Récupération du seuil de tolérance (logique corrigée) */
-        int seuilT = -1;
-        System.out.print("Seuil de tolérance compris entre 0 et 100 : ");
+        float seuilT = -1;
+        System.out.print("Seuil de tolérance compris entre 0 et 1 : ");
 
         while (true) {
-            if (!scanner.hasNextInt()) {
-                System.out.println("Erreur : vous devez entrer un entier.");
+            if (!scanner.hasNextFloat()) {
+                System.out.println("Erreur : vous devez entrer un nombre à virgule (exemple 0.90).");
                 scanner.next(); /* Vider l'entrée invalide du buffer */
             } else {
-                seuilT = scanner.nextInt();
-                if (seuilT >= 0 && seuilT <= 100) {
+                seuilT = scanner.nextFloat();
+                if (seuilT >= 0 && seuilT <= 1) {
                     break; /* Saisie correcte, on sort de la boucle */
                 } else {
-                    System.out.println("Erreur : veuillez entrer un entier compris entre 0 et 100.");
+                    System.out.println("Erreur : veuillez entrer un nombre à virgule compris entre 0 et 1.");
                 }
             }
         }
