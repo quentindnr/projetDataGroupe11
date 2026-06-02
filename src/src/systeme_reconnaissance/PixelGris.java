@@ -12,7 +12,7 @@ public class PixelGris extends Pixel{
     /**
      * Constructeur de la classe PixelGris qui permet d'initialisé une instance de PixelGris
      * @param x coordonnée horizontal du pixel
-     * @param y coordonnée vertical du pixel
+     * @param y coordonnée verticale du pixel
      * @param nuanceGris valeur (entre 0 et 255) du pixel
      */
     PixelGris(int x, int y, int nuanceGris) {

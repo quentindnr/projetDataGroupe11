@@ -96,7 +96,6 @@ public class IhmConsole {
                 System.out.println("Chargement des images de " + f.getName());
                 tabPersonne[indice] = new Personne(f.getName());
                 tabPersonne[indice].getAllImagePersonne();
-                System.out.println(tabPersonne[indice].toString());
                 indice++;
             }
         }
