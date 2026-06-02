@@ -46,10 +46,6 @@ public class SousEspace {
         return visageMoyen;
     }
 
-    public Vecteur getVisageMoyen() {
-        return visageMoyen;
-    }
-
     /**
      * Vecteur[] vecteurs = new Vecteur[personnes.length];
      * 
