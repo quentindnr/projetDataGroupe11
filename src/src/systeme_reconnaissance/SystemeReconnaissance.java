@@ -21,6 +21,16 @@ public class SystemeReconnaissance {
     private Personne[] personnes;
 
     /**
+     * Projections des images d'apprentissage qu'on sauvegarde pour optimiser les benchamark
+     */
+    private Vecteur[] projectionsApprentissage;
+
+    /**
+     * Personne associee a chaque projection de {@link #projectionsApprentissage}
+     */
+    private Personne[] personnesApprentissage;
+
+    /**
      * Une classe qui represente le systeme de reconnaissance faciale
      *
      * @param seuilReconnaissance Le seuil de reconnaissance a partir duquel on considere une personne inconnue. Il
@@ -47,10 +57,12 @@ public class SystemeReconnaissance {
      */
     public void entrainer() {
         ArrayList<Vecteur> vecteurs = new ArrayList<>();
+        ArrayList<Personne> proprietaires = new ArrayList<>(); // liste de personne qui sert à stocker les vecteurs qui represente l'image d'une personne
 
         for (int i = 0; i < personnes.length; i++) {
             for (Image image : personnes[i].getImages()) {
                 vecteurs.add(image.toVecteur());
+                proprietaires.add(personnes[i]);
             }
         }
 
@@ -58,6 +70,14 @@ public class SystemeReconnaissance {
 
         sousEspace = new SousEspace(vecteursArray);
         sousEspace.calculerEigenface(seuilReconnaissance);
+
+        // On projette chaque image d'apprentissage une seule fois et on sauvegarde le resultat
+        // pour que l'identification ne reprojette pas toute la base a chaque image testee.
+        projectionsApprentissage = new Vecteur[vecteursArray.length];
+        personnesApprentissage = proprietaires.toArray(new Personne[0]);
+        for (int i = 0; i < vecteursArray.length; i++) {
+            projectionsApprentissage[i] = sousEspace.projeter(vecteursArray[i]);
+        }
     }
 
     /**
@@ -71,21 +91,18 @@ public class SystemeReconnaissance {
             throw new IllegalStateException("Le systeme doit etre entrainer avec de pouvoir faire une identification");
         }
 
-        Vecteur projection = sousEspace.projeter(imageTest);
+        Vecteur projection = sousEspace.projeter(imageTest.toVecteur());
         int seuil = 3500;
 
         double min = Double.POSITIVE_INFINITY;
         Personne personneMin = null;
 
-        for (Personne personne : personnes) {
-            for (Image image : personne.getImages()) {
-                Vecteur projectionImage = sousEspace.projeter(image.toVecteur());
-                double distance = projectionImage.distance(projection);
+        for (int i = 0; i < projectionsApprentissage.length; i++) {
+            double distance = projectionsApprentissage[i].distance(projection);
 
-                if (distance < min) {
-                    min = distance;
-                    personneMin = personne;
-                }
+            if (distance < min) {
+                min = distance;
+                personneMin = personnesApprentissage[i];
             }
         }
 
