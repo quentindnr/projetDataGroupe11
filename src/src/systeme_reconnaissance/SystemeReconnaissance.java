@@ -124,7 +124,7 @@ public class SystemeReconnaissance {
         }
 
         Vecteur projection = sousEspace.projeter(imageTest);
-        int seuil = 2500;
+        int seuil = 3500;
 
         double min = Double.POSITIVE_INFINITY;
         Gabarit gabaritMin = null;
