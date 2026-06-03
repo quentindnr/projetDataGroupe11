@@ -37,12 +37,12 @@ public class IhmConsole {
             indice++;
         }
 
-        /* 2. Entrainement du systeme */
+        /* Entrainement du systeme */
         SystemeReconnaissance systeme = new SystemeReconnaissance(0.95, tabPersonne);
         System.out.println("\nEntrainement du systeme...");
         systeme.entrainer();
 
-        /* 3. Parcours de toutes les images du dossier de test */
+        /* Parcours de toutes les images du dossier de test */
         File[] dossiersTest = dossierTest.listFiles(File::isDirectory);
         if (dossiersTest == null) {
             System.out.println("Erreur critique : Dossier '" + dossierTest.getPath() + "' introuvable.");
@@ -78,10 +78,8 @@ public class IhmConsole {
 
                 boolean correct;
                 if (estIntrus) {
-                    // Personne absente de la base : la bonne reponse est "non reconnu"
                     correct = !resultat.estReconnu();
                 } else {
-                    // Personne presente : la bonne reponse est le bon nom
                     correct = resultat.estReconnu() && nomPredit.equalsIgnoreCase(nomAttendu);
                 }
 
@@ -98,7 +96,7 @@ public class IhmConsole {
             }
         }
 
-        /* 4. Affichage du resultat final */
+        /* Affichage du resultat final */
         double taux = nbTotal == 0 ? 0.0 : (100.0 * nbCorrect / nbTotal);
         System.out.println("\n=== Resultat du benchmark ===");
         System.out.printf("Bonnes reponses : %d / %d (%.2f%%)%n", nbCorrect, nbTotal, taux);
