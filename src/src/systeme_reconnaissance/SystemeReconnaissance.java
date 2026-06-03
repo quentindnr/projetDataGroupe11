@@ -1,9 +1,6 @@
 package systeme_reconnaissance;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Une classe qui represente le systeme de reconnaissance faciale
@@ -23,36 +20,6 @@ public class SystemeReconnaissance {
      */
     private Personne[] personnes;
 
-    /** Projections des images d'apprentissage conservees pour l'identification. */
-    private Gabarit[] gabarits;
-
-    /**
-     * Associe une image d'apprentissage, sa personne et sa projection dans le sous-espace.
-     */
-    private static class Gabarit {
-        /** Personne a laquelle appartient l'image d'apprentissage. */
-        private final Personne personne;
-
-        /** Image d'apprentissage utilisee pour creer ce gabarit. */
-        private final Image image;
-
-        /** Coordonnees de l'image dans le sous-espace des eigenfaces. */
-        private final Vecteur projection;
-
-        /**
-         * Cree un gabarit de reconnaissance.
-         *
-         * @param personne   la personne associee a l'image
-         * @param image      l'image d'apprentissage
-         * @param projection la projection de l'image dans le sous-espace
-         */
-        private Gabarit(Personne personne, Image image, Vecteur projection) {
-            this.personne = personne;
-            this.image = image;
-            this.projection = projection;
-        }
-    }
-
     /**
      * Une classe qui represente le systeme de reconnaissance faciale
      *
@@ -64,7 +31,6 @@ public class SystemeReconnaissance {
         this.sousEspace = null;
         this.seuilReconnaissance = seuilReconnaissance;
         this.personnes = personnes;
-        this.gabarits = new Gabarit[0];
     }
 
     /**
@@ -80,36 +46,18 @@ public class SystemeReconnaissance {
      * Entraine le systeme sur la base de personnes
      */
     public void entrainer() {
-        if (personnes == null || personnes.length == 0) {
-            throw new IllegalStateException("La base d'apprentissage est vide.");
-        }
+        ArrayList<Vecteur> vecteurs = new ArrayList<>();
 
-        List<Vecteur> vecteurs = new ArrayList<>();
-        List<Personne> proprietaires = new ArrayList<>();
-        List<Image> images = new ArrayList<>();
-
-        for (Personne personne : personnes) {
-            if (personne.getNombreImages() == 0) {
-                personne.getAllImagePersonne();
-            }
-            for (Image image : personne.getImages()) {
+        for (int i = 0; i < personnes.length; i++) {
+            for (Image image : personnes[i].getImages()) {
                 vecteurs.add(image.toVecteur());
-                proprietaires.add(personne);
-                images.add(image);
             }
         }
 
-        if (vecteurs.isEmpty()) {
-            throw new IllegalStateException("Aucune image PGM chargee pour entrainer le systeme.");
-        }
+        Vecteur[] vecteursArray = vecteurs.toArray(new Vecteur[0]);
 
-        sousEspace = new SousEspace(vecteurs.toArray(new Vecteur[0]));
-        sousEspace.calculerEigenface();
-        gabarits = new Gabarit[images.size()];
-
-        for (int i = 0; i < images.size(); i++) {
-            gabarits[i] = new Gabarit(proprietaires.get(i), images.get(i), sousEspace.projeter(images.get(i)));
-        }
+        sousEspace = new SousEspace(vecteursArray);
+        sousEspace.calculerEigenface(seuilReconnaissance);
     }
 
     /**
@@ -127,65 +75,21 @@ public class SystemeReconnaissance {
         int seuil = 3500;
 
         double min = Double.POSITIVE_INFINITY;
-        Gabarit gabaritMin = null;
+        Personne personneMin = null;
 
-        for (Gabarit gabarit : gabarits) {
-            double distance = gabarit.projection.distance(projection);
-            if (distance < min) {
-                min = distance;
-                gabaritMin = gabarit;
+        for (Personne personne : personnes) {
+            for (Image image : personne.getImages()) {
+                Vecteur projectionImage = sousEspace.projeter(image.toVecteur());
+                double distance = projectionImage.distance(projection);
+
+                if (distance < min) {
+                    min = distance;
+                    personneMin = personne;
+                }
             }
         }
 
-        boolean estReconnu = gabaritMin != null && min <= seuil;
-        return new ResultatIdentification(estReconnu ? gabaritMin.personne : null, min, estReconnu);
+        boolean estReconnu = personneMin != null && min <= seuil;
+        return new ResultatIdentification(personneMin, min, estReconnu);
     }
-
-    /**
-     * Retourne le sous-espace calcule pendant l'entrainement.
-     *
-     * @return le sous-espace de projection, ou null si le systeme n'est pas encore entraine
-     */
-    public SousEspace getSousEspace() {
-        return sousEspace;
-    }
-
-    /**
-     * Retourne le nombre de gabarits disponibles dans la base de reconnaissance.
-     *
-     * @return le nombre d'images d'apprentissage projetees
-     */
-    public int getNombreGabarits() {
-        return gabarits.length;
-    }
-
-    /**
-     * Charge toutes les personnes presentes dans un dossier racine.
-     *
-     * Chaque sous-dossier est considere comme une personne et les fichiers PGM qu'il contient
-     * sont charges comme images d'apprentissage.
-     *
-     * @param cheminDossierRacine le chemin du dossier contenant les sous-dossiers de personnes
-     * @return le tableau des personnes chargees
-     */
-    public static Personne[] chargerPersonnesDepuisDossier(String cheminDossierRacine) {
-        File dossierRacine = new File(cheminDossierRacine);
-        File[] dossiers = dossierRacine.listFiles(File::isDirectory);
-
-        if (dossiers == null) {
-            throw new IllegalArgumentException("Dossier racine introuvable : " + cheminDossierRacine);
-        }
-
-        Arrays.sort(dossiers, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
-        Personne[] personnes = new Personne[dossiers.length];
-
-        for (int i = 0; i < dossiers.length; i++) {
-            Personne personne = new Personne(dossiers[i].getName());
-            personne.chargerImagesDepuisDossier(dossiers[i]);
-            personnes[i] = personne;
-        }
-
-        return personnes;
-    }
-
 }
