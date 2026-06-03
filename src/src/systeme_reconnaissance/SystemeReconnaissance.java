@@ -71,7 +71,7 @@ public class SystemeReconnaissance {
             throw new IllegalStateException("Le systeme doit etre entrainer avec de pouvoir faire une identification");
         }
 
-        Vecteur projection = sousEspace.projeter(imageTest);
+        Vecteur projection = sousEspace.projeter(imageTest.toVecteur());
         int seuil = 3500;
 
         double min = Double.POSITIVE_INFINITY;

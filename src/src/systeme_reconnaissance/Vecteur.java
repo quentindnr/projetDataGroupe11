@@ -154,19 +154,6 @@ public class Vecteur {
     }
 
     /**
-     * Calcule la norme euclidienne du vecteur.
-     *
-     * @return la norme du vecteur
-     */
-    public int getNorme() {
-        int sum = 0;
-        for (int i = 0; i < this.dimension; i++) {
-            sum += this.composantes[i] * this.composantes[i];
-        }
-        return (int) Math.sqrt(sum);
-    }
-
-    /**
      * Calcule la distance euclidienne entre ce vecteur et un autre vecteur.
      *
      * @param v le vecteur de comparaison
