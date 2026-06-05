@@ -106,7 +106,29 @@ public class SystemeReconnaissance {
             }
         }
 
+        double erreur = calculerErreurReconstruction(imageTest.toVecteur(), sousEspace);
+        System.out.print("Erreur : " + Math.round(erreur));
+
         boolean estReconnu = personneMin != null && min <= seuil;
         return new ResultatIdentification(personneMin, min, estReconnu);
+    }
+
+    double calculerErreurReconstruction(Vecteur vecteur, SousEspace sousEspace) {
+        Vecteur projection = sousEspace.projeter(vecteur);
+        Eigenface[] eigenfaces = sousEspace.getEigenfaces();
+
+        // Reconstruction dans l'espace des pixels
+        Vecteur reconstruction = sousEspace.getVecteurMoyen().copier();
+        int dimension = reconstruction.getDimension();
+        for (int i = 0; i < eigenfaces.length; i++) {
+            double coordonnee = projection.getComposantesAvecIndex(i);
+            Vecteur eigenface = eigenfaces[i].getVecteur();
+            for (int p = 0; p < dimension; p++) {
+                double valeur = reconstruction.getComposantesAvecIndex(p) + coordonnee * eigenface.getComposantesAvecIndex(p);
+                reconstruction.setComposantesAvecIndex(p, valeur);
+            }
+        }
+
+        return vecteur.distance(reconstruction);
     }
 }

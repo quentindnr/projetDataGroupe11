@@ -164,7 +164,7 @@ public class Vecteur {
         if (this.dimension != v.dimension) {
             throw new IllegalArgumentException("Les vecteurs doivent avoir la même dimension pour calculer leur distance.");
         }
-        int sum = 0;
+        double sum = 0;
         for (int i = 0; i < this.dimension; i++) {
             sum += Math.pow(this.composantes[i] - v.composantes[i], 2);
         }

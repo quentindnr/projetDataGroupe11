@@ -5,12 +5,10 @@ package systeme_reconnaissance;
  */
 public class ResultatIdentification {
 
-    // --- Attributs privés (Encapsulation) ---
     private Personne personne;
     private double distance;
     private boolean estReconnu;
 
-    // --- Constructeur ---
     /**
      * Crée un nouveau résultat d'identification. * @param personne La personne identifiée (peut être null si non reconnu).
      * 
@@ -23,7 +21,6 @@ public class ResultatIdentification {
         this.estReconnu = estReconnu;
     }
 
-    // --- Méthodes publiques (Getters) ---
 
     /**
      * Indique si le visage a été reconnu.

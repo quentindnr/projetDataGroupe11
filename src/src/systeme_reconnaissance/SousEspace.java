@@ -36,6 +36,15 @@ public class SousEspace {
     }
 
     /**
+     * Retourne le visage moyen du sous-espace.
+     *
+     * @return le vecteur moyen, dans l'espace des pixels
+     */
+    public Vecteur getVecteurMoyen() {
+        return matrice.getVecteurMoyen();
+    }
+
+    /**
      * Calcule les eigenfaces
      */
     public void calculerEigenface(double seuil) {

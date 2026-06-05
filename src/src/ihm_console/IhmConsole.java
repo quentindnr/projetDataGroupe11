@@ -87,12 +87,13 @@ public class IhmConsole {
                 if (correct) {
                     nbCorrect++;
                 }
-
-                System.out.printf("[%s] attendu=%-12s predit=%-7s distance=%.2f -> %s%n",
+                System.out.printf(" %s attendu=%-12s predit=%-7s distance=%.2f -> %s%n",
                         correct ? "OK " : "ERR",
                         estIntrus ? (nomAttendu + " (intrus)") : nomAttendu,
                         nomPredit, resultat.getDistance(),
-                        correct ? "correct" : "incorrect");
+                        correct ? "correct" : "incorrect"
+
+                );
             }
         }
 
