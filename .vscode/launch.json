@@ -6,6 +6,13 @@
   "configurations": [
     {
         "type": "java",
+        "name": "IhmConsole",
+        "request": "launch",
+        "mainClass": "ihm_console.IhmConsole",
+        "projectName": "projetDataGroupe11_eddf42e1"
+    },
+    {
+        "type": "java",
         "name": "IhmGraphique",
         "request": "launch",
         "mainClass": "ihm_graphique.IhmGraphique",
