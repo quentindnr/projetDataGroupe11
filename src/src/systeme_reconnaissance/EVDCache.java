@@ -99,14 +99,12 @@ public class EVDCache {
      * @return Le nombre de composantes pricipales
      */
     public int calculerNbrComposantes(double seuil) {
-        int n = 0;
-        for (int i = 0; i < valeursPropresTriees.length; i++) {
+        for (int i = 1; i <= valeursPropresTriees.length; i++) {
             if (calculerVarianceExpliqueCumule(i) >= seuil) {
-                n = i + 1;
-                break;
+                return i;
             }
         }
-        return n;
+        return valeursPropresTriees.length;
     }
 
     /**
@@ -115,7 +113,7 @@ public class EVDCache {
      * @return Les composantes pricipales
      */
     public Eigenface[] getComposantes(double seuil) {
-        Eigenface[] composantes = Arrays.copyOfRange(valeursPropresTriees, 0, calculerNbrComposantes(seuil) - 1);
+        Eigenface[] composantes = Arrays.copyOfRange(valeursPropresTriees, 0, calculerNbrComposantes(seuil));
 
         for (Eigenface composante : composantes) {
             composante.ajoutVecteur(getVecteurPropre(composante.getRang()));

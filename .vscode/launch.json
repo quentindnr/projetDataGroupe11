@@ -9,6 +9,13 @@
         "name": "IhmGraphique",
         "request": "launch",
         "mainClass": "ihm_graphique.IhmGraphique",
+        "projectName": "projetDataGroupe11_eddf42e1"
+    },
+    {
+        "type": "java",
+        "name": "IhmGraphique",
+        "request": "launch",
+        "mainClass": "ihm_graphique.IhmGraphique",
         "projectName": "projetDataGroupe11_393e6a3"
     },
     {
