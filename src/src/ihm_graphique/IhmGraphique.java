@@ -25,6 +25,7 @@ public class IhmGraphique extends Application {
 
     private Label texte;
     private ImageView imageView;
+    private ImageView imageResultat;
     private Label resultatLabel;
     private systeme_reconnaissance.SystemeReconnaissance systeme;
 
@@ -113,7 +114,12 @@ public class IhmGraphique extends Application {
         resultatLabel = new Label("Aucune analyse");
         resultatLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
-        resultBox.getChildren().addAll(resTitle, resultatLabel);
+        imageResultat = new ImageView();
+        imageResultat.setFitWidth(150);
+        imageResultat.setFitHeight(150);
+        imageResultat.setPreserveRatio(true);
+
+        resultBox.getChildren().addAll(resTitle, imageResultat, resultatLabel);
 
         /*
          * ===== CENTER LAYOUT (CORRIGÉ POUR VERSION EMPILÉE) ===== Une VBox globale pour empiler les cartes au milieu de
@@ -206,12 +212,27 @@ public class IhmGraphique extends Application {
         systeme_reconnaissance.Image img = new systeme_reconnaissance.Image(fichier.getName());
         img.chargerImagePGM(fichier.getAbsolutePath());
         ResultatIdentification result = systeme.identifier(img);
+
         if (result.estReconnu()) {
-            resultatLabel.setText("Personne reconnue : " + result.getPersonne().getNom());
+            resultatLabel.setText("Personne reconnue : " + result.getPersonne().getNom() + "\nDistance : " + String.format("%.1f", result.getDistance()));
+
+            String racine = System.getProperty("user.dir");
+            File dossierPersonne = new File(racine + "/archive/train/" + result.getPersonne().getNom() + "/");
+            File[] images = dossierPersonne.listFiles((d, n) -> n.endsWith(".pgm"));
+
+            if (images != null && images.length > 0) {
+                Arrays.sort(images);
+                try {
+                    imageResultat.setImage(PGMLoader.loadPGM(images[0]));
+                } catch (Exception e) {
+                    imageResultat.setImage(null);
+                    e.printStackTrace();
+                }
+            }
         } else {
             resultatLabel.setText("Personne inconnue");
+            imageResultat.setImage(null);
         }
-
     }
 
     public static void main(String[] args) {
