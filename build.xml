@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="FacialRecognition" default="all" basedir=".">
+
+    <property name="src.dir"     value="src/src"/>
+    <property name="build.dir"   value="build"/>
+    <property name="dist.dir"    value="dist"/>
+    <property name="docs.dir"    value="docs"/>
+    <property name="lib.dir"     value="lib"/>
+    <property name="jar.name"    value="facial-recognition.jar"/>
+    <property name="main.class"  value="Main"/>
+    
+    <property name="javafx.dir"  value="${lib.dir}/openjfx-21.0.10_linux-x64_bin-sdk/javafx-sdk-21.0.10/lib"/>
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+
+    <target name="all" depends="clean, compile, jar, javadoc, package"
+            description="Nettoyage, compilation, création du JAR, Javadoc et packaging final"/>
+
+    <target name="compile" description="Compile les sources">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}"
+               destdir="${build.dir}"
+               includeantruntime="false"
+               encoding="UTF-8"
+               debug="true">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile" description="Crée le JAR de l'application">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/${jar.name}" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar" description="Lance l'application localement">
+        <java fork="true" classname="${main.class}">
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement location="${dist.dir}/${jar.name}"/>
+            </classpath>
+            <jvmarg value="--module-path"/>
+            <jvmarg value="${javafx.dir}"/>
+            <jvmarg value="--add-modules"/>
+            <jvmarg value="javafx.controls,javafx.fxml,javafx.graphics"/>
+        </java>
+    </target>
+
+    <target name="javadoc" description="Génère la Javadoc HTML">
+        <mkdir dir="${docs.dir}"/>
+        <javadoc sourcepath="${src.dir}"
+                 destdir="${docs.dir}"
+                 encoding="UTF-8"
+                 charset="UTF-8"
+                 windowtitle="Facial Recognition"
+                 doctitle="&lt;h1&gt;Facial Recognition&lt;/h1&gt;"
+                 author="true"
+                 version="true"
+                 use="true">
+            <packageset dir="${src.dir}">
+                <include name="ihm_graphique/**"/>
+                <include name="ihm_console/**"/>
+                <include name="systeme_reconnaissance/**"/>
+            </packageset>
+            <classpath refid="classpath"/>
+        </javadoc>
+    </target>
+
+    <target name="package" depends="jar" description="Prépare l'archive finale compressée pour le rendu">
+        <property name="delivery.dir" value="rendu_projet"/>
+        <delete dir="${delivery.dir}"/>
+        <mkdir dir="${delivery.dir}"/>
+        <mkdir dir="${delivery.dir}/lib"/>
+        
+        <copy file="${dist.dir}/${jar.name}" todir="${delivery.dir}"/>
+        
+        <copy todir="${delivery.dir}/lib">
+            <fileset dir="${lib.dir}"/>
+        </copy>
+        
+        <copy todir="${delivery.dir}/archive" failonerror="false">
+            <fileset dir="archive" erroronmissingdir="false"/>
+        </copy>
+
+        <echo file="${delivery.dir}/run.sh">#!/bin/bash
+BASEDIR=$(dirname "$0")
+
+# Recherche dynamique du dossier lib de JavaFX dans l'archive extraite
+JAVAFX_PATH=$(find "$BASEDIR/lib" -type d -path "*/javafx-sdk-*/lib" -o -path "*/openjfx-*/lib" | head -n 1)
+
+if [ -z "$JAVAFX_PATH" ]; then
+    JAVAFX_PATH="$BASEDIR/lib"
+fi
+
+java -cp "$BASEDIR/facial-recognition.jar:$BASEDIR/lib/*" \
+     --module-path "$JAVAFX_PATH" \
+     --add-modules javafx.controls,javafx.fxml,javafx.graphics \
+     Main
+</echo>
+        <chmod file="${delivery.dir}/run.sh" perm="755"/>
+
+        <echo file="${delivery.dir}/run.bat">@echo off
+set JAVAFX_PATH=%~dp0lib\openjfx-21.0.10_linux-x64_bin-sdk\javafx-sdk-21.0.10\lib
+java -cp "%~dp0facial-recognition.jar;%~dp0lib\*" --module-path "%JAVAFX_PATH%" --add-modules javafx.controls,javafx.fxml,javafx.graphics Main
+pause
+</echo>
+
+        <zip destfile="rendu_facial_recognition.zip" basedir="${delivery.dir}"/>
+        
+        <echo message="----------------------------------------------------------"/>
+        <echo message="L'archive 'rendu_facial_recognition.zip' a été créée !"/>
+        <echo message="C'est ce fichier ZIP complet que tu dois envoyer au prof."/>
+        <echo message="----------------------------------------------------------"/>
+    </target>
+
+    <target name="clean" description="Supprime les fichiers générés">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <delete dir="${docs.dir}"/>
+        <delete dir="rendu_projet"/>
+    </target>
+
+</project>
