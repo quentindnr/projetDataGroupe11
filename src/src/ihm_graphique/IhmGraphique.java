@@ -22,24 +22,49 @@ import systeme_reconnaissance.Personne;
 import systeme_reconnaissance.ResultatIdentification;
 import systeme_reconnaissance.SystemeReconnaissance;
 
+/**
+ * Application JavaFX principale de l'interface graphique de reconnaissance faciale.
+ * <p>
+ * Au démarrage, charge le jeu de données d'entraînement et entraîne le système de reconnaissance. Affiche ensuite une
+ * fenêtre permettant à l'utilisateur d'importer une image PGM (via sélecteur de fichier ou glisser-déposer) et de
+ * consulter le résultat d'identification.
+ * </p>
+ */
 public class IhmGraphique extends Application {
 
+    /**
+     * Label d'instruction pour l'utilisateur, affiché avant l'importation d'une image.
+     */
     private Label texte;
-    private ImageView imageView;
-    private ImageView imageResultat;
-    private Label resultatLabel;
-    private systeme_reconnaissance.SystemeReconnaissance systeme;
 
+    /** Affiche l'image importée par l'utilisateur. */
+    private ImageView imageView;
+
+    /** Affiche la meilleure image d'entraînement correspondante après identification. */
+    private ImageView imageResultat;
+
+    /** Affiche le résultat de l'identification (nom, distance ou message d'erreur). */
+    private Label resultatLabel;
+
+    /** Système de reconnaissance faciale entraîné. */
+    private SystemeReconnaissance systeme;
+
+    /**
+     * Initialise et affiche la fenêtre principale de l'application. Charge toutes les personnes d'entraînement depuis
+     * {@code <répertoire-courant>/archive/train/}, entraîne le système de reconnaissance par ACP, puis construit et affiche
+     * l'interface.
+     *
+     * @param stage le stage principal fourni par le runtime JavaFX
+     */
     @Override
     public void start(Stage stage) {
 
         String racine = System.getProperty("user.dir");
         File dossierTrain = new File(racine + "/archive/train/");
 
-        /* Chargement du data set d'entrainement */
         File[] dossiersTrain = dossierTrain.listFiles(File::isDirectory);
         if (dossiersTrain == null) {
-            System.out.println("Error: folder not found.");
+            System.out.println("Erreur : dossier introuvable.");
             return;
         }
         Arrays.sort(dossiersTrain, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
@@ -54,19 +79,15 @@ public class IhmGraphique extends Application {
             indice++;
         }
 
-        /* Entrainement du systeme */
         systeme = new SystemeReconnaissance(0.95, tabPersonne);
         systeme.entrainer();
 
         BorderPane root = new BorderPane();
 
-        /*
-         * ===== TOP =====
-         */
-        Label title = new Label("Facial Recognition");
+        Label title = new Label("Reconnaissance Faciale");
         title.setStyle("-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: bold;");
 
-        Button btnVisuels = new Button("PCA visuals (mean face, eigenfaces…)");
+        Button btnVisuels = new Button("Visuels ACP (visage moyen, eigenfaces…)");
         btnVisuels.setOnAction(e -> IhmVisuels.ouvrirFenetre());
 
         VBox top = new VBox(10, title, btnVisuels);
@@ -75,47 +96,37 @@ public class IhmGraphique extends Application {
 
         root.setTop(top);
 
-        /*
-         * ===== IMAGE CARD =====
-         */
         VBox imageBox = new VBox(10);
         imageBox.setAlignment(Pos.CENTER);
         imageBox.setStyle("-fx-background-color: white;" + "-fx-padding: 20;" + "-fx-background-radius: 20;"
                 + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.3, 0, 4);");
-
-        // Limite la largeur pour éviter l'effet "bandeau étiré"
         imageBox.setMaxWidth(450);
         imageBox.setMinWidth(450);
 
-        Label importLabel = new Label("Import Image");
+        Label importLabel = new Label("Importer une image");
         importLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        texte = new Label("Drag & Drop or click");
+        texte = new Label("Glisser-déposer ou cliquer");
         texte.setStyle("-fx-font-size: 14px;");
 
         imageView = new ImageView();
-        imageView.setFitWidth(250); // Légèrement réduit pour laisser de la place verticalement
+        imageView.setFitWidth(250);
         imageView.setFitHeight(250);
         imageView.setPreserveRatio(true);
 
         imageBox.getChildren().addAll(importLabel, texte, imageView);
 
-        /*
-         * ===== RESULT CARD =====
-         */
         VBox resultBox = new VBox(10);
         resultBox.setAlignment(Pos.CENTER);
         resultBox.setStyle("-fx-background-color: white;" + "-fx-padding: 20;" + "-fx-background-radius: 20;"
                 + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.3, 0, 4);");
-
-        // Même largeur que la carte du dessus pour une belle harmonie visuelle
         resultBox.setMaxWidth(450);
         resultBox.setMinWidth(450);
 
-        Label resTitle = new Label("Result");
+        Label resTitle = new Label("Résultat");
         resTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        resultatLabel = new Label("No analysis yet");
+        resultatLabel = new Label("Aucune analyse effectuée");
         resultatLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
         imageResultat = new ImageView();
@@ -125,23 +136,14 @@ public class IhmGraphique extends Application {
 
         resultBox.getChildren().addAll(resTitle, imageResultat, resultatLabel);
 
-        /*
-         * ===== CENTER LAYOUT (CORRIGÉ POUR VERSION EMPILÉE) ===== Une VBox globale pour empiler les cartes au milieu de
-         * l'écran
-         */
-        VBox centerContainer = new VBox(20); // 20px d'espace vertical entre les deux blocs
+        VBox centerContainer = new VBox(20);
         centerContainer.setAlignment(Pos.CENTER);
-        // Fond légèrement gris pour faire ressortir l'ombre des cartes blanches
         centerContainer.setStyle("-fx-background-color: #f5f6fa; -fx-padding: 25;");
-
         centerContainer.getChildren().addAll(imageBox, resultBox);
 
         root.setCenter(centerContainer);
 
-        /*
-         * CLICK + DRAG sur IMAGE CARD
-         */
-        imageBox.setOnMouseClicked(e -> openFile(stage));
+        imageBox.setOnMouseClicked(e -> ouvrirFichier(stage));
 
         imageBox.setOnDragOver(e -> {
             if (e.getDragboard().hasFiles()) {
@@ -159,66 +161,59 @@ public class IhmGraphique extends Application {
             e.consume();
         });
 
-        /*
-         * SCENE
-         */
-        // Taille de fenêtre adaptée pour le mode vertical (plus haute que large)
         Scene scene = new Scene(root, 650, 750);
-
         stage.setScene(scene);
-        stage.setTitle("Facial Recognition");
-
+        stage.setTitle("Reconnaissance Faciale");
         stage.show();
     }
 
-    /*
-     * OPEN FILE
+    /**
+     * Ouvre un sélecteur de fichier limité aux images PGM et charge le fichier sélectionné.
+     *
+     * @param stage le stage propriétaire utilisé pour afficher la boîte de dialogue modale
      */
-    private void openFile(Stage stage) {
-
+    private void ouvrirFichier(Stage stage) {
         FileChooser chooser = new FileChooser();
-
-        chooser.setTitle("Choose an image");
-
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PGM images", "*.pgm"));
-
+        chooser.setTitle("Choisir une image");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images PGM", "*.pgm"));
         File file = chooser.showOpenDialog(stage);
-
         if (file != null) {
             afficherImage(file);
         }
     }
 
-    /*
-     * DISPLAY IMAGE
+    /**
+     * Charge et affiche une image PGM, puis déclenche l'identification.
+     *
+     * @param fichier le fichier PGM à afficher et analyser
      */
     private void afficherImage(File fichier) {
-
         try {
-
             Image image = PGMLoader.loadPGM(fichier);
-
             imageView.setImage(image);
-
             texte.setVisible(false);
-
-            resultatLabel.setText("Analyzing...");
+            resultatLabel.setText("Analyse en cours…");
             analyserImage(fichier);
-
         } catch (Exception e) {
-
-            resultatLabel.setText("Image loading error");
+            resultatLabel.setText("Erreur lors du chargement de l'image");
             e.printStackTrace();
         }
     }
 
+    /**
+     * Lance la reconnaissance sur le fichier donné et met à jour la carte résultat. Si la personne est reconnue,
+     * {@link #resultatLabel} affiche son nom et la distance de projection, et {@link #imageResultat} affiche la première
+     * image d'entraînement de son dossier. Dans le cas contraire, un message "Personne inconnue" est affiché.
+     *
+     * @param fichier le fichier PGM à identifier
+     */
     private void analyserImage(File fichier) {
         systeme_reconnaissance.Image img = new systeme_reconnaissance.Image(fichier.getName());
         img.chargerImagePGM(fichier.getAbsolutePath());
         ResultatIdentification result = systeme.identifier(img);
 
         if (result.estReconnu()) {
-            resultatLabel.setText("Recognized: " + result.getPersonne().getNom() + "\nDistance: " + String.format("%.1f", result.getDistance()));
+            resultatLabel.setText("Reconnu : " + result.getPersonne().getNom() + "\nDistance : " + String.format("%.1f", result.getDistance()));
 
             String racine = System.getProperty("user.dir");
             File dossierPersonne = new File(racine + "/archive/train/" + result.getPersonne().getNom() + "/");
@@ -234,11 +229,16 @@ public class IhmGraphique extends Application {
                 }
             }
         } else {
-            resultatLabel.setText("Unknown person");
+            resultatLabel.setText("Personne inconnue");
             imageResultat.setImage(null);
         }
     }
 
+    /**
+     * Point d'entrée de l'application.
+     *
+     * @param args arguments de la ligne de commande (non utilisés)
+     */
     public static void main(String[] args) {
         launch(args);
     }
