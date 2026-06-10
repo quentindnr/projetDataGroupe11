@@ -13,7 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -31,6 +30,31 @@ public class IhmGraphique extends Application {
 
     @Override
     public void start(Stage stage) {
+
+        String racine = System.getProperty("user.dir");
+        File dossierTrain = new File(racine + "/archive/train/");
+
+        /* Chargement du data set d'entrainement */
+        File[] dossiersTrain = dossierTrain.listFiles(File::isDirectory);
+        if (dossiersTrain == null) {
+            System.out.println("Erreur : Le dossier est introuvable.");
+            return;
+        }
+        Arrays.sort(dossiersTrain, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+
+        Personne[] tabPersonne = new Personne[dossiersTrain.length];
+        Set<String> nomsConnus = new HashSet<>();
+        int indice = 0;
+        for (File f : dossiersTrain) {
+            tabPersonne[indice] = new Personne(f.getName());
+            tabPersonne[indice].chargerImagesDepuisDossier(f);
+            nomsConnus.add(f.getName().toLowerCase());
+            indice++;
+        }
+
+        /* Entrainement du systeme */
+        systeme = new SystemeReconnaissance(0.95, tabPersonne);
+        systeme.entrainer();
 
         BorderPane root = new BorderPane();
 
@@ -54,6 +78,10 @@ public class IhmGraphique extends Application {
         imageBox.setStyle("-fx-background-color: white;" + "-fx-padding: 20;" + "-fx-background-radius: 20;"
                 + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.3, 0, 4);");
 
+        // Limite la largeur pour éviter l'effet "bandeau étiré"
+        imageBox.setMaxWidth(450);
+        imageBox.setMinWidth(450);
+
         Label importLabel = new Label("Import Image");
         importLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
@@ -61,8 +89,8 @@ public class IhmGraphique extends Application {
         texte.setStyle("-fx-font-size: 14px;");
 
         imageView = new ImageView();
-        imageView.setFitWidth(300);
-        imageView.setFitHeight(300);
+        imageView.setFitWidth(250); // Légèrement réduit pour laisser de la place verticalement
+        imageView.setFitHeight(250);
         imageView.setPreserveRatio(true);
 
         imageBox.getChildren().addAll(importLabel, texte, imageView);
@@ -75,26 +103,30 @@ public class IhmGraphique extends Application {
         resultBox.setStyle("-fx-background-color: white;" + "-fx-padding: 20;" + "-fx-background-radius: 20;"
                 + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.3, 0, 4);");
 
+        // Même largeur que la carte du dessus pour une belle harmonie visuelle
+        resultBox.setMaxWidth(450);
+        resultBox.setMinWidth(450);
+
         Label resTitle = new Label("Résultat");
         resTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
         resultatLabel = new Label("Aucune analyse");
-        resultatLabel.setStyle("-fx-font-size: 14px;");
+        resultatLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
         resultBox.getChildren().addAll(resTitle, resultatLabel);
 
         /*
-         * ===== CENTER LAYOUT =====
+         * ===== CENTER LAYOUT (CORRIGÉ POUR VERSION EMPILÉE) ===== Une VBox globale pour empiler les cartes au milieu de
+         * l'écran
          */
-        StackPane center = new StackPane();
+        VBox centerContainer = new VBox(20); // 20px d'espace vertical entre les deux blocs
+        centerContainer.setAlignment(Pos.CENTER);
+        // Fond légèrement gris pour faire ressortir l'ombre des cartes blanches
+        centerContainer.setStyle("-fx-background-color: #f5f6fa; -fx-padding: 25;");
 
-        VBox container = new VBox(20);
-        container.setAlignment(Pos.CENTER);
-        container.getChildren().addAll(imageBox, resultBox);
+        centerContainer.getChildren().addAll(imageBox, resultBox);
 
-        center.getChildren().add(container);
-
-        root.setCenter(center);
+        root.setCenter(centerContainer);
 
         /*
          * CLICK + DRAG sur IMAGE CARD
@@ -120,7 +152,8 @@ public class IhmGraphique extends Application {
         /*
          * SCENE
          */
-        Scene scene = new Scene(root, 900, 650);
+        // Taille de fenêtre adaptée pour le mode vertical (plus haute que large)
+        Scene scene = new Scene(root, 650, 750);
 
         stage.setScene(scene);
         stage.setTitle("Reconnaissance Faciale");
@@ -172,30 +205,6 @@ public class IhmGraphique extends Application {
     private void analyserImage(File fichier) {
         systeme_reconnaissance.Image img = new systeme_reconnaissance.Image(fichier.getName());
         img.chargerImagePGM(fichier.getAbsolutePath());
-        String racine = System.getProperty("user.dir");
-        File dossierTrain = new File(racine + "/archive/train/");
-
-        /* Chargement du data set d'entrainement */
-        File[] dossiersTrain = dossierTrain.listFiles(File::isDirectory);
-        if (dossiersTrain == null) {
-            System.out.println("Erreur : Le dossier est introuvable.");
-            return;
-        }
-        Arrays.sort(dossiersTrain, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
-
-        Personne[] tabPersonne = new Personne[dossiersTrain.length];
-        Set<String> nomsConnus = new HashSet<>();
-        int indice = 0;
-        for (File f : dossiersTrain) {
-            tabPersonne[indice] = new Personne(f.getName());
-            tabPersonne[indice].chargerImagesDepuisDossier(f);
-            nomsConnus.add(f.getName().toLowerCase());
-            indice++;
-        }
-
-        /* Entrainement du systeme */
-        SystemeReconnaissance systeme = new SystemeReconnaissance(0.95, tabPersonne);
-        systeme.entrainer();
         ResultatIdentification result = systeme.identifier(img);
         if (result.estReconnu()) {
             resultatLabel.setText("Personne reconnue : " + result.getPersonne().getNom());
