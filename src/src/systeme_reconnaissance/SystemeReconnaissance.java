@@ -11,10 +11,10 @@ public class SystemeReconnaissance {
      */
     private SousEspace sousEspace;
     /**
-     * Le seuil de reconnaissance a partir duquel on considere une personne inconnue. Il correspond a la distance max entre
-     * 2 images lors de la reconnaissance
+     * Ratio de variance expliquee cumulee a conserver pour choisir le nombre d'eigenfaces (phase 2).
+     * Plus il est proche de 1, plus on retient de composantes principales
      */
-    private double seuilReconnaissance;
+    private double seuilVariance;
     /**
      * Les personnes qui forment notre base de reconnaissance
      */
@@ -68,23 +68,90 @@ public class SystemeReconnaissance {
     /**
      * Une classe qui represente le systeme de reconnaissance faciale
      *
-     * @param seuilReconnaissance Le seuil de reconnaissance a partir duquel on considere une personne inconnue. Il
-     *                            correspond a la distance max entre 2 images lors de la reconnaissances
-     * @param personnes           Les personnes qui forment notre base de reconnaissance
+     * @param seuilVariance Ratio de variance expliquee cumulee a conserver pour choisir le nombre
+     *                      d'eigenfaces (souvent 0.95). Plus il est proche de 1, plus on retient de
+     *                      composantes principales
+     * @param personnes     Les personnes qui forment notre base de reconnaissance
      */
-    public SystemeReconnaissance(double seuilReconnaissance, Personne[] personnes) {
+    public SystemeReconnaissance(double seuilVariance, Personne[] personnes) {
         this.sousEspace = null;
-        this.seuilReconnaissance = seuilReconnaissance;
+        this.seuilVariance = seuilVariance;
         this.personnes = personnes;
     }
 
     /**
-     * Change la valeur de seuilReconnaissance
-     * 
-     * @param seuilReconnaissance La nouvelle valeur
+     * Change la valeur de seuilVariance
+     *
+     * @param seuilVariance La nouvelle valeur
      */
-    public void setSeuilReconnaissance(double seuilReconnaissance) {
-        this.seuilReconnaissance = seuilReconnaissance;
+    public void setSeuilVariance(double seuilVariance) {
+        this.seuilVariance = seuilVariance;
+    }
+
+    /**
+     * Retourne le seuil sur la distance minimale Θd (section 3.1)
+     *
+     * @return le seuil sur la distance minimale
+     */
+    public double getSeuilDistance() {
+        return seuilDistance;
+    }
+
+    /**
+     * Retourne le seuil sur l'erreur de reconstruction Θr (section 3.2)
+     *
+     * @return le seuil sur l'erreur de reconstruction
+     */
+    public double getSeuilReconstruction() {
+        return seuilReconstruction;
+    }
+
+    /**
+     * Retourne le seuil de la statistique de Hotelling T2 (section 3.3)
+     *
+     * @return le seuil de Hotelling
+     */
+    public double getSeuilHotelling() {
+        return seuilHotelling;
+    }
+
+    /**
+     * Construit le sous-espace des eigenfaces et la galerie des projections de reference a partir
+     * des vecteurs d'apprentissage fournis
+     */
+    private void construireGalerie(Vecteur[] vecteurs, Personne[] proprietaires) {
+        sousEspace = new SousEspace(vecteurs);
+        sousEspace.calculerEigenface(seuilVariance);
+
+        // On projette chaque image d'apprentissage une seule fois et on sauvegarde le resultat
+        // pour que l'identification ne reprojette pas toute la base a chaque image testee.
+        projectionsApprentissage = new Vecteur[vecteurs.length];
+        personnesApprentissage = proprietaires;
+        for (int i = 0; i < vecteurs.length; i++) {
+            projectionsApprentissage[i] = sousEspace.projeter(vecteurs[i]);
+        }
+    }
+
+    /**
+     * Enregistre l'ensemble de validation (visages connus non utilises pour construire la base) et
+     * en deduit les 3 seuils de la phase de robustesse (section 3.4). Si des intrus de validation
+     * sont fournis, le seuil de distance est choisi entre les deux distributions (section 3.1)
+     */
+    private void estimerSeuils(Vecteur[] vecteursValidation, Personne[] personnesValidation, Vecteur[] intrusValidation) {
+        vecteursValidationArray = vecteursValidation;
+        personnesValidationArray = personnesValidation;
+        projectionsValidation = new Vecteur[vecteursValidation.length];
+        for (int i = 0; i < vecteursValidation.length; i++) {
+            projectionsValidation[i] = sousEspace.projeter(vecteursValidation[i]);
+        }
+
+        seuilReconstruction = calculerSeuilReconstruction(NIVEAU_CONFIANCE);
+        seuilHotelling = calculerSeuilHotelling(NIVEAU_CONFIANCE);
+        if (intrusValidation != null && intrusValidation.length > 0) {
+            seuilDistance = calculerSeuilDistanceDiscriminant(intrusValidation);
+        } else {
+            seuilDistance = calculerSeuilDistance(NIVEAU_CONFIANCE);
+        }
     }
 
     /**
@@ -116,32 +183,40 @@ public class SystemeReconnaissance {
             }
         }
 
-        Vecteur[] vecteursArray = vecteursBase.toArray(new Vecteur[0]);
+        construireGalerie(vecteursBase.toArray(new Vecteur[0]), personnesBase.toArray(new Personne[0]));
+        estimerSeuils(vecteursValidation.toArray(new Vecteur[0]), personnesValidation.toArray(new Personne[0]), null);
+    }
 
-        sousEspace = new SousEspace(vecteursArray);
-        sousEspace.calculerEigenface(seuilReconnaissance);
-
-        // On projette chaque image d'apprentissage une seule fois et on sauvegarde le resultat
-        // pour que l'identification ne reprojette pas toute la base a chaque image testee.
-        projectionsApprentissage = new Vecteur[vecteursArray.length];
-        personnesApprentissage = personnesBase.toArray(new Personne[0]);
-        for (int i = 0; i < vecteursArray.length; i++) {
-            projectionsApprentissage[i] = sousEspace.projeter(vecteursArray[i]);
+    /**
+     * Entraine le systeme avec une base de validation externe (methodologie a trois bases :
+     * apprentissage / validation / test). La galerie est construite sur la totalite des images de
+     * reference, et les 3 seuils sont estimes sur la base de validation.
+     *
+     * @param validationConnus Les visages connus de la base de validation (memes identites que la
+     *                         base de reference, mais d'autres images)
+     * @param intrusValidation Les visages inconnus de la base de validation, utilises pour choisir
+     *                         le seuil de distance entre les deux distributions (section 3.1)
+     */
+    public void entrainer(Personne[] validationConnus, Vecteur[] intrusValidation) {
+        ArrayList<Vecteur> vecteursBase = new ArrayList<>();
+        ArrayList<Personne> personnesBase = new ArrayList<>();
+        for (int i = 0; i < personnes.length; i++) {
+            for (Image image : personnes[i].getImages()) {
+                vecteursBase.add(image.toVecteur());
+                personnesBase.add(personnes[i]);
+            }
         }
+        construireGalerie(vecteursBase.toArray(new Vecteur[0]), personnesBase.toArray(new Personne[0]));
 
-        // Projection de l'ensemble de validation (visages genuins non vus par la base).
-        vecteursValidationArray = vecteursValidation.toArray(new Vecteur[0]);
-        personnesValidationArray = personnesValidation.toArray(new Personne[0]);
-        projectionsValidation = new Vecteur[vecteursValidationArray.length];
-        for (int i = 0; i < vecteursValidationArray.length; i++) {
-            projectionsValidation[i] = sousEspace.projeter(vecteursValidationArray[i]);
+        ArrayList<Vecteur> vecteursValidation = new ArrayList<>();
+        ArrayList<Personne> personnesValidation = new ArrayList<>();
+        for (int i = 0; i < validationConnus.length; i++) {
+            for (Image image : validationConnus[i].getImages()) {
+                vecteursValidation.add(image.toVecteur());
+                personnesValidation.add(validationConnus[i]);
+            }
         }
-
-        // Estimation des 3 seuils de la phase de robustesse (section 3.4) sur l'ensemble de
-        // validation. Ils sont calcules une seule fois ici puis reutilises a chaque identification.
-        seuilDistance = calculerSeuilDistance(NIVEAU_CONFIANCE);
-        seuilReconstruction = calculerSeuilReconstruction(NIVEAU_CONFIANCE);
-        seuilHotelling = calculerSeuilHotelling(NIVEAU_CONFIANCE);
+        estimerSeuils(vecteursValidation.toArray(new Vecteur[0]), personnesValidation.toArray(new Personne[0]), intrusValidation);
     }
 
     /**
@@ -281,7 +356,7 @@ public class SystemeReconnaissance {
         for (int i = 0; i < projectionsValidation.length; i++) {
             double minMemePersonne = Double.POSITIVE_INFINITY;
             for (int j = 0; j < projectionsApprentissage.length; j++) {
-                if (personnesValidationArray[i] != personnesApprentissage[j]) {
+                if (!personnesValidationArray[i].getNom().equals(personnesApprentissage[j].getNom())) {
                     continue;
                 }
                 double distance = projectionsValidation[i].distance(projectionsApprentissage[j]);
@@ -303,6 +378,82 @@ public class SystemeReconnaissance {
             valeurs[i] = distances.get(i);
         }
         return percentile(valeurs, percentile);
+    }
+
+    /**
+     * Choisit le seuil sur la distance minimale (section 3.1) "entre les deux distributions" en
+     * utilisant les intrus de la base de validation. On calcule, pour chaque visage connu de
+     * validation, la distance au plus proche modele de la meme personne, et pour chaque intrus la
+     * distance au plus proche modele quelconque. Le seuil retenu est celui qui minimise le nombre
+     * d'erreurs sur la validation (connus rejetes + intrus acceptes)
+     *
+     * @param intrusValidation Les vecteurs des visages inconnus de la base de validation
+     * @return Le seuil sur la distance minimale
+     */
+    double calculerSeuilDistanceDiscriminant(Vecteur[] intrusValidation) {
+        ArrayList<Double> connus = new ArrayList<>();
+        for (int i = 0; i < projectionsValidation.length; i++) {
+            double minMemePersonne = Double.POSITIVE_INFINITY;
+            for (int j = 0; j < projectionsApprentissage.length; j++) {
+                if (!personnesValidationArray[i].getNom().equals(personnesApprentissage[j].getNom())) {
+                    continue;
+                }
+                double distance = projectionsValidation[i].distance(projectionsApprentissage[j]);
+                if (distance < minMemePersonne) {
+                    minMemePersonne = distance;
+                }
+            }
+            if (minMemePersonne != Double.POSITIVE_INFINITY) {
+                connus.add(minMemePersonne);
+            }
+        }
+
+        ArrayList<Double> intrus = new ArrayList<>();
+        for (Vecteur vecteur : intrusValidation) {
+            Vecteur projection = sousEspace.projeter(vecteur);
+            double min = Double.POSITIVE_INFINITY;
+            for (int j = 0; j < projectionsApprentissage.length; j++) {
+                double distance = projection.distance(projectionsApprentissage[j]);
+                if (distance < min) {
+                    min = distance;
+                }
+            }
+            intrus.add(min);
+        }
+
+        if (connus.isEmpty()) {
+            return Double.POSITIVE_INFINITY;
+        }
+        if (intrus.isEmpty()) {
+            return calculerSeuilDistance(NIVEAU_CONFIANCE);
+        }
+
+        // On teste chaque distance observee comme seuil candidat et on garde celui qui minimise les
+        // erreurs : un visage connu a une distance >= seuil est rejete a tort, un intrus a une
+        // distance < seuil est accepte a tort.
+        ArrayList<Double> candidats = new ArrayList<>(connus);
+        candidats.addAll(intrus);
+
+        double meilleurSeuil = candidats.get(0);
+        int meilleurErreurs = Integer.MAX_VALUE;
+        for (double seuil : candidats) {
+            int erreurs = 0;
+            for (double d : connus) {
+                if (d >= seuil) {
+                    erreurs++;
+                }
+            }
+            for (double d : intrus) {
+                if (d < seuil) {
+                    erreurs++;
+                }
+            }
+            if (erreurs < meilleurErreurs) {
+                meilleurErreurs = erreurs;
+                meilleurSeuil = seuil;
+            }
+        }
+        return meilleurSeuil;
     }
 
     /**
