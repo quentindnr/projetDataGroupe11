@@ -106,6 +106,24 @@ public class Personne {
     }
 
     /**
+     * Charge un ensemble precis de fichiers PGM comme images de la personne.
+     *
+     * Contrairement a {@link #chargerImagesDepuisDossier(File)}, les fichiers sont fournis
+     * explicitement, ce qui permet de repartir les images d'une meme personne entre plusieurs bases
+     * (apprentissage, validation, test).
+     *
+     * @param fichiers les fichiers PGM a charger, dans l'ordre voulu
+     */
+    public void chargerImagesDepuisFichiers(File[] fichiers) {
+        this.image = new Image[fichiers.length];
+        for (int i = 0; i < fichiers.length; i++) {
+            Image img = new Image(nom + "_" + i);
+            img.chargerImagePGM(fichiers[i].getPath());
+            this.image[i] = img;
+        }
+    }
+
+    /**
      * Retourne une variable String qui represnte la personne.
      *
      * @return une chaine contenant le nom de la personne et son nombre d'images
