@@ -1,6 +1,6 @@
 # Reconnaissance faciale par Analyse en Composantes Principales (ACP)
 
-Projet SAÉ — ING1 MA-GI, CY Tech (2025-2026) — **Groupe 11**
+Projet SAÉ — ING1 GM-GI, CY Tech (2025-2026) — **Groupe 11**
 
 Application Java de reconnaissance faciale par la méthode des **eigenfaces**. Chaque visage est
 représenté comme un vecteur de pixels, projeté dans un sous-espace de dimension réduite construit par
@@ -88,4 +88,4 @@ Base **ORL / AT&T** (« The ORL face database », Olivetti Research Laboratory, 
 (apprentissage / validation / test) ; certaines identités sont volontairement exclues de
 l'apprentissage pour servir d'intrus et tester le rejet.
 
-> Lors de l'utilisation de ces images, créditer l'Olivetti Research Laboratory.
+
