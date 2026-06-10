@@ -16,7 +16,7 @@
     </path>
 
     <target name="all" depends="clean, compile, jar, javadoc, package"
-            description="Nettoyage, compilation, création du JAR, Javadoc et packaging final"/>
+            description="Nettoyage, compilation, creation du JAR, Javadoc et packaging final"/>
 
     <target name="compile" description="Compile les sources">
         <mkdir dir="${build.dir}"/>
@@ -29,7 +29,7 @@
         </javac>
     </target>
 
-    <target name="jar" depends="compile" description="Crée le JAR de l'application">
+    <target name="jar" depends="compile" description="Cree le JAR de l'application">
         <mkdir dir="${dist.dir}"/>
         <jar destfile="${dist.dir}/${jar.name}" basedir="${build.dir}">
             <manifest>
@@ -51,7 +51,7 @@
         </java>
     </target>
 
-    <target name="javadoc" description="Génère la Javadoc HTML">
+    <target name="javadoc" description="Genere la Javadoc HTML">
         <mkdir dir="${docs.dir}"/>
         <javadoc sourcepath="${src.dir}"
                  destdir="${docs.dir}"
@@ -71,7 +71,7 @@
         </javadoc>
     </target>
 
-    <target name="package" depends="jar" description="Prépare l'archive finale compressée pour le rendu">
+    <target name="package" depends="jar" description="Prepare l'archive finale compressee pour le rendu">
         <property name="delivery.dir" value="rendu_projet"/>
         <delete dir="${delivery.dir}"/>
         <mkdir dir="${delivery.dir}"/>
@@ -86,6 +86,8 @@
         <copy todir="${delivery.dir}/archive" failonerror="false">
             <fileset dir="archive" erroronmissingdir="false"/>
         </copy>
+
+        <copy file="README.md" todir="${delivery.dir}" failonerror="false" quiet="true"/>
 
         <echo file="${delivery.dir}/run.sh">#!/bin/bash
 BASEDIR=$(dirname "$0")
@@ -106,19 +108,19 @@ java -cp "$BASEDIR/facial-recognition.jar:$BASEDIR/lib/*" \
 
         <echo file="${delivery.dir}/run.bat">@echo off
 set JAVAFX_PATH=%~dp0lib\openjfx-21.0.10_linux-x64_bin-sdk\javafx-sdk-21.0.10\lib
-java -cp "%~dp0facial-recognition.jar;%~dp0lib\*" --module-path "%JAVAFX_PATH%" --add-modules javafx.controls,javafx.fxml,javafx.graphics Main
+java -cp "%~dp0facial-recognition.jar;%~dp0lib\*" --module-path "%YOUR_JAVAFX_PATH%" --add-modules javafx.controls,javafx.fxml,javafx.graphics Main
 pause
 </echo>
 
         <zip destfile="rendu_facial_recognition.zip" basedir="${delivery.dir}"/>
         
         <echo message="----------------------------------------------------------"/>
-        <echo message="L'archive 'rendu_facial_recognition.zip' a été créée !"/>
-        <echo message="C'est ce fichier ZIP complet que tu dois envoyer au prof."/>
+        <echo message="L'archive 'rendu_facial_recognition.zip' a ete creee !"/>
+        <echo message="Le fichier README.md a bien ete integre a l'interieur."/>
         <echo message="----------------------------------------------------------"/>
     </target>
 
-    <target name="clean" description="Supprime les fichiers générés">
+    <target name="clean" description="Supprime les fichiers generes">
         <delete dir="${build.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${docs.dir}"/>
