@@ -48,7 +48,7 @@ public class SystemeReconnaissance {
     /**
      * Niveau de confiance utilise pour estimer les 3 seuils de la phase de robustesse (souvent 0.95 ou 0.99)
      */
-    private static final double NIVEAU_CONFIANCE = 0.95;
+    private static final double NIVEAU_CONFIANCE = 0.99;
 
     /**
      * Seuil sur la distance minimale au plus proche voisin (section 3.1)

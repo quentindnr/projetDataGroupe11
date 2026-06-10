@@ -8,6 +8,7 @@ import java.util.Set;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,7 +39,7 @@ public class IhmGraphique extends Application {
         /* Chargement du data set d'entrainement */
         File[] dossiersTrain = dossierTrain.listFiles(File::isDirectory);
         if (dossiersTrain == null) {
-            System.out.println("Erreur : Le dossier est introuvable.");
+            System.out.println("Error: folder not found.");
             return;
         }
         Arrays.sort(dossiersTrain, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
@@ -62,10 +63,13 @@ public class IhmGraphique extends Application {
         /*
          * ===== TOP =====
          */
-        Label title = new Label("Reconnaissance Faciale");
+        Label title = new Label("Facial Recognition");
         title.setStyle("-fx-font-size: 24px; -fx-text-fill: white; -fx-font-weight: bold;");
 
-        VBox top = new VBox(title);
+        Button btnVisuels = new Button("PCA visuals (mean face, eigenfaces…)");
+        btnVisuels.setOnAction(e -> IhmVisuels.ouvrirFenetre());
+
+        VBox top = new VBox(10, title, btnVisuels);
         top.setAlignment(Pos.CENTER);
         top.setStyle("-fx-background-color: #2c3e50; -fx-padding: 15;");
 
@@ -86,7 +90,7 @@ public class IhmGraphique extends Application {
         Label importLabel = new Label("Import Image");
         importLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        texte = new Label("Drag & Drop ou clic");
+        texte = new Label("Drag & Drop or click");
         texte.setStyle("-fx-font-size: 14px;");
 
         imageView = new ImageView();
@@ -108,10 +112,10 @@ public class IhmGraphique extends Application {
         resultBox.setMaxWidth(450);
         resultBox.setMinWidth(450);
 
-        Label resTitle = new Label("Résultat");
+        Label resTitle = new Label("Result");
         resTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
-        resultatLabel = new Label("Aucune analyse");
+        resultatLabel = new Label("No analysis yet");
         resultatLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #7f8c8d;");
 
         imageResultat = new ImageView();
@@ -162,7 +166,7 @@ public class IhmGraphique extends Application {
         Scene scene = new Scene(root, 650, 750);
 
         stage.setScene(scene);
-        stage.setTitle("Reconnaissance Faciale");
+        stage.setTitle("Facial Recognition");
 
         stage.show();
     }
@@ -174,9 +178,9 @@ public class IhmGraphique extends Application {
 
         FileChooser chooser = new FileChooser();
 
-        chooser.setTitle("Choisir une image");
+        chooser.setTitle("Choose an image");
 
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Images PGM", "*.pgm"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("PGM images", "*.pgm"));
 
         File file = chooser.showOpenDialog(stage);
 
@@ -198,12 +202,12 @@ public class IhmGraphique extends Application {
 
             texte.setVisible(false);
 
-            resultatLabel.setText("Analyse en cours...");
+            resultatLabel.setText("Analyzing...");
             analyserImage(fichier);
 
         } catch (Exception e) {
 
-            resultatLabel.setText("Erreur chargement image");
+            resultatLabel.setText("Image loading error");
             e.printStackTrace();
         }
     }
@@ -214,7 +218,7 @@ public class IhmGraphique extends Application {
         ResultatIdentification result = systeme.identifier(img);
 
         if (result.estReconnu()) {
-            resultatLabel.setText("Personne reconnue : " + result.getPersonne().getNom() + "\nDistance : " + String.format("%.1f", result.getDistance()));
+            resultatLabel.setText("Recognized: " + result.getPersonne().getNom() + "\nDistance: " + String.format("%.1f", result.getDistance()));
 
             String racine = System.getProperty("user.dir");
             File dossierPersonne = new File(racine + "/archive/train/" + result.getPersonne().getNom() + "/");
@@ -230,7 +234,7 @@ public class IhmGraphique extends Application {
                 }
             }
         } else {
-            resultatLabel.setText("Personne inconnue");
+            resultatLabel.setText("Unknown person");
             imageResultat.setImage(null);
         }
     }
