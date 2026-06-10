@@ -155,6 +155,8 @@ public class Image {
 
         for(int i = 0; i<this.getHauteur(); i++){
             for(int j = 0; j<this.getLargeur(); j++){
+                // Parcours en serpent : lignes paires de gauche a droite, lignes impaires de droite a
+                // gauche, pour que deux pixels voisins le restent dans le vecteur.
                 if(i%2 == 0){
                     vecteurColonne[indice] = this.getImage(i,j);
                 }else{
@@ -227,6 +229,7 @@ public class Image {
         int indice = 0;
         for (int i = 0; i < hauteurImage; i++) {
             for (int j = 0; j < largeurImage; j++) {
+                // Serpent inverse de toVecteur : on retrouve la colonne x selon la parite de la ligne.
                 int x;
                 if (i % 2 == 0) {
                     x = j;

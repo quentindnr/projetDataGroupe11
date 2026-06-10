@@ -94,9 +94,10 @@ public class EVDCache {
     }
 
     /**
-     * Calcule le nombre de composantes pricipales avec la methode du coude
+     * Calcule le nombre de composantes principales a retenir : le plus petit nombre dont la variance cumulee atteint le seuil
      * 
-     * @return Le nombre de composantes pricipales
+     * @param seuil La proportion de variance cumulee a atteindre (entre 0 et 1)
+     * @return Le nombre de composantes principales a retenir
      */
     public int calculerNbrComposantes(double seuil) {
         for (int i = 1; i <= valeursPropresTriees.length; i++) {
@@ -108,9 +109,10 @@ public class EVDCache {
     }
 
     /**
-     * Les composantes pricipales
-     * 
-     * @return Les composantes pricipales
+     * Retourne les composantes principales retenues (les eigenfaces selectionnes selon le seuil)
+     *
+     * @param seuil La proportion de variance cumulee a conserver (entre 0 et 1)
+     * @return Les composantes principales retenues
      */
     public Eigenface[] getComposantes(double seuil) {
         Eigenface[] composantes = Arrays.copyOfRange(valeursPropresTriees, 0, calculerNbrComposantes(seuil));

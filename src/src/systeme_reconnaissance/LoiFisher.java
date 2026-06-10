@@ -23,7 +23,7 @@ public final class LoiFisher {
      * @param proba L'ordre du quantile entre 0 et 1
      * @param d1    Le premier nombre de degres de liberte
      * @param d2    Le second nombre de degres de liberte
-     * @return La valeur x telle que P(X <= x) = proba
+     * @return La valeur x dont la fonction de repartition vaut proba
      */
     public static double quantile(double proba, double d1, double d2) {
         if (proba <= 0) {
@@ -33,6 +33,8 @@ public final class LoiFisher {
             return Double.POSITIVE_INFINITY;
         }
 
+        // La repartition de F(d1, d2) vaut I_t(d1/2, d2/2) avec t = d1*x / (d1*x + d2). On inverse donc
+        // d'abord la beta incomplete pour obtenir t (= y), puis on revient a x.
         double y = inverseBetaIncomplete(proba, d1 / 2.0, d2 / 2.0);
         return (d2 * y) / (d1 * (1.0 - y));
     }
@@ -46,16 +48,19 @@ public final class LoiFisher {
      * @return La valeur x entre 0 et 1 correspondante
      */
     private static double inverseBetaIncomplete(double proba, double a, double b) {
+        // I_x(a, b) est croissante en x : on encadre la solution sur [0, 1] par dichotomie.
         double bas = 0.0;
         double haut = 1.0;
         for (int i = 0; i < 100; i++) {
             double milieu = 0.5 * (bas + haut);
+            // Repartition trop faible au milieu -> la solution est a droite, sinon a gauche.
             if (betaIncomplete(a, b, milieu) < proba) {
                 bas = milieu;
             } else {
                 haut = milieu;
             }
         }
+        // 100 iterations reduisent l'intervalle d'un facteur 2^100, bien en dessous de la precision machine.
         return 0.5 * (bas + haut);
     }
 
@@ -75,9 +80,12 @@ public final class LoiFisher {
             return 1;
         }
 
+        // Prefacteur x^a (1-x)^b / B(a, b), calcule via les log-gamma pour eviter tout debordement.
         double facteur = Math.exp(
                 logGamma(a + b) - logGamma(a) - logGamma(b) + a * Math.log(x) + b * Math.log(1 - x));
 
+        // La fraction continue ne converge vite que pour x < (a+1)/(a+b+2). Au-dela, on exploite la
+        // symetrie I_x(a, b) = 1 - I_(1-x)(b, a) pour rester dans la zone de convergence rapide.
         if (x < (a + 1) / (a + b + 2)) {
             return facteur * fractionContinueBeta(a, b, x) / a;
         }
@@ -93,6 +101,9 @@ public final class LoiFisher {
      * @return La valeur de la fraction continue
      */
     private static double fractionContinueBeta(double a, double b, double x) {
+        // Evaluation par l'algorithme de Lentz : on calcule la fraction continue de facon iterative en
+        // suivant numerateur (c) et denominateur (d). 'minimum' remplace toute valeur quasi nulle par
+        // un epsilon pour eviter les divisions par zero.
         final double minimum = 1.0e-30;
         double qab = a + b;
         double qap = a + 1;
@@ -107,6 +118,7 @@ public final class LoiFisher {
 
         for (int m = 1; m <= 200; m++) {
             int m2 = 2 * m;
+            // Terme pair de la recurrence, puis mise a jour de c et d.
             double aa = m * (b - m) * x / ((qam + m2) * (a + m2));
             d = 1 + aa * d;
             if (Math.abs(d) < minimum) {
@@ -119,6 +131,7 @@ public final class LoiFisher {
             d = 1 / d;
             resultat *= d * c;
 
+            // Terme impair de la recurrence.
             aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2));
             d = 1 + aa * d;
             if (Math.abs(d) < minimum) {
@@ -132,6 +145,7 @@ public final class LoiFisher {
             double delta = d * c;
             resultat *= delta;
 
+            // delta tend vers 1 a convergence : on s'arrete des qu'il en est assez proche.
             if (Math.abs(delta - 1) < 1.0e-10) {
                 break;
             }
@@ -146,6 +160,8 @@ public final class LoiFisher {
      * @return La valeur de ln(gamma(x))
      */
     private static double logGamma(double x) {
+        // Approximation de Lanczos : ln(gamma(x)) = -tmp + ln(sqrt(2*pi) * serie / x), ou 'serie' est
+        // une somme tronquee de 6 coefficients precalcules et 'tmp' un terme correctif.
         double[] coefficients = {
                 76.18009172947146, -86.50532032941677, 24.01409824083091,
                 -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5
@@ -158,6 +174,7 @@ public final class LoiFisher {
             y += 1;
             serie += coefficients[j] / y;
         }
+        // 2.5066282746310005 = sqrt(2*pi).
         return -tmp + Math.log(2.5066282746310005 * serie / x);
     }
 }

@@ -118,6 +118,9 @@ public class SystemeReconnaissance {
     /**
      * Construit le sous-espace des eigenfaces et la galerie des projections de reference a partir
      * des vecteurs d'apprentissage fournis
+     *
+     * @param vecteurs      Les vecteurs images d'apprentissage
+     * @param proprietaires La personne proprietaire de chaque vecteur (meme ordre)
      */
     private void construireGalerie(Vecteur[] vecteurs, Personne[] proprietaires) {
         sousEspace = new SousEspace(vecteurs);
@@ -136,6 +139,10 @@ public class SystemeReconnaissance {
      * Enregistre l'ensemble de validation (visages connus non utilises pour construire la base) et
      * en deduit les 3 seuils de la phase de robustesse (section 3.4). Si des intrus de validation
      * sont fournis, le seuil de distance est choisi entre les deux distributions (section 3.1)
+     *
+     * @param vecteursValidation  Les vecteurs des visages connus de validation
+     * @param personnesValidation La personne associee a chaque vecteur de validation (meme ordre)
+     * @param intrusValidation    Les vecteurs des visages inconnus de validation, ou null si absents
      */
     private void estimerSeuils(Vecteur[] vecteursValidation, Personne[] personnesValidation, Vecteur[] intrusValidation) {
         vecteursValidationArray = vecteursValidation;
@@ -257,6 +264,15 @@ public class SystemeReconnaissance {
         return new ResultatIdentification(personneMin, min, estReconnu);
     }
 
+    /**
+     * Calcule l'erreur de reconstruction d'un vecteur image (section 3.2) : la distance entre le
+     * vecteur et sa reprojection dans l'espace des pixels (visage moyen + somme des scores ponderant
+     * les eigenfaces). Plus elle est grande, moins le visage est representable par la base
+     *
+     * @param vecteur    Le vecteur image a evaluer
+     * @param sousEspace Le sous-espace des eigenfaces utilise pour la reconstruction
+     * @return L'erreur de reconstruction
+     */
     double calculerErreurReconstruction(Vecteur vecteur, SousEspace sousEspace) {
         Vecteur projection = sousEspace.projeter(vecteur);
         Eigenface[] eigenfaces = sousEspace.getEigenfaces();
@@ -309,10 +325,14 @@ public class SystemeReconnaissance {
         Vecteur projection = sousEspace.projeter(vecteur);
         Eigenface[] eigenfaces = sousEspace.getEigenfaces();
 
+        // T2 = somme des beta_i^2 / lambda_i : chaque score est divise par la variance de sa composante,
+        // ce qui ramene toutes les directions a la meme echelle (distance de type Mahalanobis).
         double t2 = 0;
         for (int i = 0; i < eigenfaces.length; i++) {
             double beta = projection.getComposantesAvecIndex(i);
             double lambda = eigenfaces[i].getValeurPropre();
+            // On ignore les valeurs propres quasi nulles : diviser par ~0 ferait exploser la statistique
+            // sur des directions qui ne portent presque aucune variance.
             if (lambda > 1.0e-12) {
                 t2 += (beta * beta) / lambda;
             }
@@ -391,6 +411,7 @@ public class SystemeReconnaissance {
      * @return Le seuil sur la distance minimale
      */
     double calculerSeuilDistanceDiscriminant(Vecteur[] intrusValidation) {
+        // Pour chaque visage connu de validation : distance au plus proche modele de la MEME personne.
         ArrayList<Double> connus = new ArrayList<>();
         for (int i = 0; i < projectionsValidation.length; i++) {
             double minMemePersonne = Double.POSITIVE_INFINITY;
@@ -408,6 +429,7 @@ public class SystemeReconnaissance {
             }
         }
 
+        // Pour chaque intrus : distance au plus proche modele QUELCONQUE (il n'a aucune identite dans la base).
         ArrayList<Double> intrus = new ArrayList<>();
         for (Vecteur vecteur : intrusValidation) {
             Vecteur projection = sousEspace.projeter(vecteur);

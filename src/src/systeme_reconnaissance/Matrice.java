@@ -86,9 +86,10 @@ public class Matrice extends SimpleMatrix {
     }
 
     /**
-     * Calcule la matrice de covariance (a une constance pres)
-     * 
-     * @return La matrice de covariance
+     * Calcule la matrice de covariance reduite (1/m) A^T A, qui partage les valeurs propres non nulles
+     * de la vraie matrice de covariance (astuce de Turk-Pentland)
+     *
+     * @return La matrice de covariance reduite
      */
     public Matrice getMatriceCovariance() {
         SimpleMatrix cov = transpose().mult(this);

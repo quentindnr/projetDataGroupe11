@@ -69,8 +69,8 @@ public class Personne {
     /**
      * Charge toutes les images de la personne depuis son dossier.
      *
-     * La methode lit le dossier "archive/nom", puis cree et charge une image pour chaque fichier present dans ce dossier.
-     * Si le dossier n'existe pas, un message d'erreur est affiche et aucune image n'est chargee.
+     * La methode lit le dossier "archive/train/nom", puis cree et charge une image pour chaque fichier present dans ce
+     * dossier. Si le dossier n'existe pas, un message d'erreur est affiche et aucune image n'est chargee.
      */
     public void getAllImagePersonne() {
         chargerImagesDepuisDossier(new File("archive/train/" + nom));
@@ -124,7 +124,7 @@ public class Personne {
     }
 
     /**
-     * Retourne une variable String qui represnte la personne.
+     * Retourne une chaine de caracteres qui represente la personne.
      *
      * @return une chaine contenant le nom de la personne et son nombre d'images
      */

@@ -45,7 +45,10 @@ public class SousEspace {
     }
 
     /**
-     * Calcule les eigenfaces
+     * Calcule les eigenfaces du sous-espace : centre les donnees, calcule les valeurs propres et retient
+     * les composantes principales jusqu'au seuil de variance cumulee
+     *
+     * @param seuil La proportion de variance cumulee a conserver (entre 0 et 1)
      */
     public void calculerEigenface(double seuil) {
         // centrer la matrice
@@ -57,7 +60,9 @@ public class SousEspace {
 
         eigenfaces = valeursPropres.getComposantes(seuil);
 
-        // retour a la matrice originale
+        // Astuce de Turk-Pentland : les vecteurs propres v ont ete calcules sur la petite matrice
+        // (1/m) A^T A. On remonte chaque eigenface dans l'espace des pixels par u = A * v, puis on la
+        // normalise (norme 1) pour que les projections par produit scalaire restent correctes.
         for (Eigenface eigenface : eigenfaces) {
             SimpleMatrix vecteur = eigenface.getVecteur().toSimpleMatrix();
             vecteur = matriceCentree.mult(vecteur);
@@ -67,13 +72,13 @@ public class SousEspace {
     }
 
     /**
-     * Projete une image dans le sous-espace des eigenfaces.
+     * Projette un vecteur image dans le sous-espace des eigenfaces.
      *
-     * L'image est d'abord vectorisee et centree par soustraction du visage moyen, puis chaque coordonnee est obtenue par
-     * produit scalaire avec une eigenface.
+     * Le vecteur est d'abord centre par soustraction du visage moyen, puis chaque coordonnee est obtenue par produit
+     * scalaire avec une eigenface.
      *
-     * @param image L'image a projeter
-     * @return le gabarit de l'image dans le sous-espace
+     * @param vecteur le vecteur image a projeter
+     * @return le gabarit du vecteur dans le sous-espace
      */
     public Vecteur projeter(Vecteur vecteur) {
         if (eigenfaces == null) {

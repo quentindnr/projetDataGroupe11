@@ -10,8 +10,9 @@ public class ResultatIdentification {
     private boolean estReconnu;
 
     /**
-     * Crée un nouveau résultat d'identification. * @param personne La personne identifiée (peut être null si non reconnu).
-     * 
+     * Crée un nouveau résultat d'identification.
+     *
+     * @param personne   La personne identifiée (peut être null si non reconnu).
      * @param distance   La distance euclidienne calculée par l'algorithme ACP.
      * @param estReconnu true si la distance est inférieure au seuil de tolérance, false sinon.
      */

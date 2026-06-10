@@ -136,7 +136,7 @@ public class Vecteur {
      * Calcule le produit scalaire de ce vecteur avec un autre vecteur.
      *
      * @param v le vecteur avec lequel calculer le produit scalaire
-     * @return une matrice de dimension x dimension contenant les produits des composantes
+     * @return le produit scalaire des deux vecteurs
      * @throws IllegalArgumentException si les dimensions sont différentes
      */
     public double produitScalaire(Vecteur v) {

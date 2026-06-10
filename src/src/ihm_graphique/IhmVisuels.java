@@ -72,6 +72,8 @@ public class IhmVisuels extends Application {
     /**
      * Construit la vue des visuels : visage moyen, eigenfaces et valeurs propres, visages centres et reconstruction pour
      * plusieurs K.
+     *
+     * @return le conteneur defilant regroupant toutes les sections de visuels
      */
     private ScrollPane construireContenu() {
         SousEspace sousEspace = construireSousEspace();
@@ -117,6 +119,8 @@ public class IhmVisuels extends Application {
     /**
      * Charge la base d'apprentissage (archive/train), construit le sous-espace des eigenfaces et memorise quelques visages
      * d'exemple.
+     *
+     * @return le sous-espace des eigenfaces, ou null si le dossier d'apprentissage est introuvable
      */
     private SousEspace construireSousEspace() {
         File dossierTrain = new File(System.getProperty("user.dir") + "/archive/train/");
@@ -145,6 +149,9 @@ public class IhmVisuels extends Application {
 
     /**
      * Construit la grille des visages d'exemple avec leur version centree (visage - visage moyen).
+     *
+     * @param moyen le visage moyen a soustraire pour centrer les visages
+     * @return la grille des visages originaux et de leurs versions centrees
      */
     private FlowPane grilleCentrage(Vecteur moyen) {
         FlowPane grille = new FlowPane(15, 15);
@@ -159,6 +166,11 @@ public class IhmVisuels extends Application {
 
     /**
      * Construit la grille des reconstructions d'un visage pour plusieurs valeurs de K.
+     *
+     * @param sousEspace le sous-espace des eigenfaces
+     * @param eigenfaces les eigenfaces (axes principaux)
+     * @param moyen      le visage moyen
+     * @return la grille des reconstructions pour les differentes valeurs de K
      */
     private FlowPane grilleReconstruction(SousEspace sousEspace, Eigenface[] eigenfaces, Vecteur moyen) {
         FlowPane grille = new FlowPane(15, 15);
@@ -175,7 +187,14 @@ public class IhmVisuels extends Application {
     }
 
     /**
-     * Reconstruit un visage : visage moyen + somme des proj[i] * eigenface[i] pour i < k.
+     * Reconstruit un visage a partir du visage moyen et des k premieres composantes : visage moyen plus
+     * la somme des scores ponderant les eigenfaces.
+     *
+     * @param moyen      le visage moyen du sous-espace
+     * @param eigenfaces les eigenfaces (axes principaux)
+     * @param projection les coordonnees projetees du visage
+     * @param k          le nombre de composantes a utiliser
+     * @return le vecteur image reconstruit
      */
     private static Vecteur reconstruire(Vecteur moyen, Eigenface[] eigenfaces, Vecteur projection, int k) {
         Vecteur reconstruction = moyen.copier();
@@ -195,6 +214,10 @@ public class IhmVisuels extends Application {
 
     /**
      * Cree une section titree contenant un noeud (image ou grille).
+     *
+     * @param titre   le titre de la section
+     * @param contenu le noeud affiche sous le titre
+     * @return la boite regroupant le titre et le contenu
      */
     private static VBox section(String titre, javafx.scene.Node contenu) {
         Label label = new Label(titre);
@@ -206,6 +229,10 @@ public class IhmVisuels extends Application {
 
     /**
      * Cree une vignette : une image agrandie surmontee de sa legende.
+     *
+     * @param image   l'image a afficher
+     * @param legende le texte affiche sous l'image
+     * @return la vignette (image + legende)
      */
     private static VBox vignette(javafx.scene.image.Image image, String legende) {
         ImageView vue = new ImageView(image);
@@ -221,6 +248,9 @@ public class IhmVisuels extends Application {
 
     /**
      * Convertit un vecteur deja en niveaux de gris [0,255] (ordre serpent) en image JavaFX.
+     *
+     * @param niveauxGris le vecteur image en niveaux de gris
+     * @return l'image JavaFX correspondante
      */
     private static javafx.scene.image.Image toImage(Vecteur niveauxGris) {
         Image image = Image.fromVecteur(niveauxGris, "visuel");
@@ -240,6 +270,9 @@ public class IhmVisuels extends Application {
 
     /**
      * Borne chaque composante dans [0,255].
+     *
+     * @param vecteur le vecteur a borner
+     * @return un nouveau vecteur dont les composantes sont dans [0,255]
      */
     private static Vecteur borner(Vecteur vecteur) {
         int dimension = vecteur.getDimension();
@@ -252,6 +285,9 @@ public class IhmVisuels extends Application {
 
     /**
      * Normalise lineairement les composantes sur [0,255] (min -> 0, max -> 255).
+     *
+     * @param vecteur le vecteur a normaliser
+     * @return un nouveau vecteur normalise sur [0,255]
      */
     private static Vecteur normaliser(Vecteur vecteur) {
         int dimension = vecteur.getDimension();
@@ -272,6 +308,9 @@ public class IhmVisuels extends Application {
 
     /**
      * Enregistre une image JavaFX au format PNG (utilise pour la verification hors ecran).
+     *
+     * @param image   l'image JavaFX a enregistrer
+     * @param fichier le fichier PNG de destination
      */
     private static void sauverPng(javafx.scene.image.Image image, File fichier) {
         int largeur = (int) image.getWidth();

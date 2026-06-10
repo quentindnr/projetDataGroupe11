@@ -6,8 +6,18 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
+/**
+ * Utilitaire de chargement d'une image PGM (P2 ASCII ou P5 binaire) en image JavaFX niveaux de gris.
+ */
 public class PGMLoader {
 
+    /**
+     * Charge un fichier PGM et le convertit en image JavaFX.
+     *
+     * @param file le fichier PGM a lire (format P2 ou P5)
+     * @return l'image JavaFX correspondante
+     * @throws IOException si le format n'est pas supporte ou si la lecture echoue
+     */
     public static Image loadPGM(File file) throws IOException {
 
         try (InputStream is = new FileInputStream(file)) {

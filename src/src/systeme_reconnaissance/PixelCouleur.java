@@ -16,7 +16,8 @@ public class PixelCouleur extends Pixel {
 
     /**
      * Constructeur de la classe PixelCouleur qui permet d'initialiser une instance.
-     * * @param x     Entier qui représente la coordonnée horizontale du pixel.
+     *
+     * @param x     Entier qui représente la coordonnée horizontale du pixel.
      * @param y     Entier qui représente la coordonnée verticale du pixel.
      * @param rouge Entier qui représente la nuance de rouge du pixel.
      * @param vert  Entier qui représente la nuance de vert du pixel.
@@ -31,7 +32,8 @@ public class PixelCouleur extends Pixel {
 
     /**
      * Récupère la valeur de la nuance de rouge du pixel.
-     * * @return L'entier représentant la nuance de rouge.
+     *
+     * @return L'entier représentant la nuance de rouge.
      */
     public int getRouge() {
         return rouge;
@@ -39,7 +41,8 @@ public class PixelCouleur extends Pixel {
 
     /**
      * Modifie la valeur de la nuance de rouge du pixel.
-     * * @param rouge La nouvelle valeur de la nuance de rouge.
+     *
+     * @param rouge La nouvelle valeur de la nuance de rouge.
      */
     public void setRouge(int rouge) {
         this.rouge = rouge;
@@ -47,7 +50,8 @@ public class PixelCouleur extends Pixel {
 
     /**
      * Récupère la valeur de la nuance de vert du pixel.
-     * * @return L'entier représentant la nuance de vert.
+     *
+     * @return L'entier représentant la nuance de vert.
      */
     public int getVert() {
         return vert;
@@ -55,7 +59,8 @@ public class PixelCouleur extends Pixel {
 
     /**
      * Modifie la valeur de la nuance de vert du pixel.
-     * * @param vert La nouvelle valeur de la nuance de vert.
+     *
+     * @param vert La nouvelle valeur de la nuance de vert.
      */
     public void setVert(int vert) {
         this.vert = vert;
@@ -63,7 +68,8 @@ public class PixelCouleur extends Pixel {
 
     /**
      * Récupère la valeur de la nuance de bleu du pixel.
-     * * @return L'entier représentant la nuance de bleu.
+     *
+     * @return L'entier représentant la nuance de bleu.
      */
     public int getBleu() {
         return bleu;
@@ -71,7 +77,8 @@ public class PixelCouleur extends Pixel {
 
     /**
      * Modifie la valeur de la nuance de bleu du pixel.
-     * * @param bleu La nouvelle valeur de la nuance de bleu.
+     *
+     * @param bleu La nouvelle valeur de la nuance de bleu.
      */
     public void setBleu(int bleu) {
         this.bleu = bleu;
