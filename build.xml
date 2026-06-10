@@ -87,6 +87,11 @@
             <fileset dir="archive" erroronmissingdir="false"/>
         </copy>
 
+        <mkdir dir="${delivery.dir}/src"/>
+        <copy todir="${delivery.dir}/src">
+            <fileset dir="${src.dir}"/>
+        </copy>
+
         <copy file="README.md" todir="${delivery.dir}" failonerror="false" quiet="true"/>
 
         <echo file="${delivery.dir}/run.sh">#!/bin/bash
@@ -108,7 +113,7 @@ java -cp "$BASEDIR/facial-recognition.jar:$BASEDIR/lib/*" \
 
         <echo file="${delivery.dir}/run.bat">@echo off
 set JAVAFX_PATH=%~dp0lib\openjfx-21.0.10_linux-x64_bin-sdk\javafx-sdk-21.0.10\lib
-java -cp "%~dp0facial-recognition.jar;%~dp0lib\*" --module-path "%YOUR_JAVAFX_PATH%" --add-modules javafx.controls,javafx.fxml,javafx.graphics Main
+java -cp "%~dp0facial-recognition.jar;%~dp0lib\*" --module-path "%JAVAFX_PATH%" --add-modules javafx.controls,javafx.fxml,javafx.graphics Main
 pause
 </echo>
 
@@ -116,7 +121,7 @@ pause
         
         <echo message="----------------------------------------------------------"/>
         <echo message="L'archive 'rendu_facial_recognition.zip' a ete creee !"/>
-        <echo message="Le fichier README.md a bien ete integre a l'interieur."/>
+        <echo message="Le code source et le README.md y ont ete integres."/>
         <echo message="----------------------------------------------------------"/>
     </target>
 
